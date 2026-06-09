@@ -1,0 +1,39 @@
+<article class="container mt-5" style="max-width: 550px;">
+  <div class="card shadow">
+    
+    <div class="card-header bg-white pt-3 border-0">
+      <div class="d-flex justify-content-center gap-2">
+        
+        <button 
+          type="button"
+          class="btn w-50 py-2 fw-bold"
+          [class.btn-primary]="mostrarLogin"
+          [class.btn-light]="!mostrarLogin"
+          (click)="mostrarLogin = true"
+        >
+          Iniciar Sesión
+        </button>
+
+        <button 
+          type="button"
+          class="btn w-50 py-2 fw-bold"
+          [class.btn-primary]="!mostrarLogin"
+          [class.btn-light]="mostrarLogin"
+          (click)="mostrarLogin = false"
+        >
+          Registrarse
+        </button>
+
+      </div>
+    </div>
+
+    <div class="card-body p-4">
+      @if (mostrarLogin) {
+        <app-login-form></app-login-form>
+      } @else {
+        <app-register-form></app-register-form>
+      }
+    </div>
+
+  </div>
+</article>

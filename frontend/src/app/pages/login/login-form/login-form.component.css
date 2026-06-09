@@ -1,0 +1,23 @@
+input.ng-invalid.ng-touched{
+    border-bottom: 3px solid tomato;
+
+}
+
+.error{
+    font-size: 10px;
+    color: tomato;
+    margin: 0;
+
+}
+
+.btn.disabled, .btn:disabled, fieldset:disabled .btn {
+    color: blue;
+    pointer-events: none;
+    background-color: grey;
+    border-color: var(--bs-btn-disabled-border-color);
+    opacity: var(--bs-btn-disabled-opacity);
+}
+
+img{
+    width: 150px;
+}

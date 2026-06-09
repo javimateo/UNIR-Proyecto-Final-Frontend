@@ -1,0 +1,70 @@
+<form [formGroup]="registerForm" (ngSubmit)="getDataForm()">
+  
+  <h3 class="text-center mb-4 text-secondary">Crea tu Cuenta</h3>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label fw-bold">Nombre</label>
+      <input 
+        type="text" 
+        formControlName="nombre" 
+        class="form-control"
+        [class.is-invalid]="checkControl('nombre', 'required') || checkControl('nombre', 'minlength')"
+      />
+      <div class="invalid-feedback">El nombre es obligatorio (min. 3 letras).</div>
+    </div>
+
+    <div class="col-md-6 mb-3">
+      <label class="form-label fw-bold">Apellido</label>
+      <input 
+        type="text" 
+        formControlName="apellido" 
+        class="form-control"
+        [class.is-invalid]="checkControl('apellido', 'required') || checkControl('apellido', 'minlength')"
+      />
+      <div class="invalid-feedback">El apellido es obligatorio (min. 3 letras).</div>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label fw-bold">Correo Electrónico</label>
+    <input 
+      type="email" 
+      formControlName="email" 
+      class="form-control"
+      [class.is-invalid]="checkControl('email', 'required') || checkControl('email', 'pattern')"
+    />
+    <div class="invalid-feedback">Introduce un correo electrónico válido.</div>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label fw-bold">Contraseña</label>
+    <input 
+      type="password" 
+      formControlName="password" 
+      class="form-control"
+      [class.is-invalid]="checkControl('password', 'required') || checkControl('password', 'minlength')"
+    />
+    <div class="invalid-feedback">La contraseña debe tener mínimo 8 caracteres.</div>
+  </div>
+
+  <div class="mb-4">
+    <label class="form-label fw-bold">Confirmar Contraseña</label>
+    <input 
+      type="password" 
+      formControlName="confirmPassword" 
+      class="form-control"
+      [class.is-invalid]="checkControl('confirmPassword', 'required') || registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched"
+    />
+    @if (registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched) {
+      <div class="text-danger small mt-1">Las contraseñas no coinciden.</div>
+    } @else {
+      <div class="invalid-feedback">Este campo es obligatorio.</div>
+    }
+  </div>
+
+  <div class="d-grid">
+    <input type="submit" class="btn btn-primary btn-lg" [disabled]="!registerForm.valid" >
+  </div>
+
+</form>
