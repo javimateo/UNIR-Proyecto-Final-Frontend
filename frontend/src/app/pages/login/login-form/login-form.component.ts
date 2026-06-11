@@ -1,6 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthServiceServices } from '../../../service/auth-service.services';
+import { firstValueFrom } from 'rxjs';
 
 
 @Component({
@@ -12,7 +14,7 @@ import { Router } from '@angular/router';
 })
 export class LoginFormComponent {
   private router = inject(Router);
-
+  private authService = inject(AuthServiceServices)
   loginForm: FormGroup;
 
   constructor() {
@@ -30,14 +32,26 @@ export class LoginFormComponent {
   async getDataForm() {
     if (this.loginForm.valid) {
       try {
+        const response = await firstValueFrom (this.authService.login(this.loginForm.value))
+
         console.log('Datos de login enviados:', this.loginForm.value);
         
-        
+        const role = this.authService.getRole()
+
+        if(role == 'ADMIN'){
+          this.router.navigate(['/admin-dashboard'])
+        }else if (role === 'MODERATOR'){
+          this.router.navigate(['/mod-dashboard'])
+        }else{
+          this.router.navigate(['/home'])
+        }
         
         this.router.navigate(['/home']);
       } catch (error) {
         console.error('Error en el login:', error);
       }
+    }else{
+      this.loginForm.markAllAsTouched()
     }
   }
 }

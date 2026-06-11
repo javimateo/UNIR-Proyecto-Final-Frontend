@@ -8,7 +8,7 @@ import { lastValueFrom } from 'rxjs';
 })
 export class IUserServices {
   private httpClient = inject(HttpClient);
-  private baseUrl = 'https://localhost:3000/api/users';
+  private baseUrl = 'https://localhost:3306/api/users';
 
   getAllPromises(url: string= ''): Promise<IUserListResponse> {
     const miUrl = (url === "") ? this.baseUrl : url;
