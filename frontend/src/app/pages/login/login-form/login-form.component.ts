@@ -42,7 +42,7 @@ export class LoginFormComponent {
         await firstValueFrom(this.authService.getProfile());
 
         const role = this.authService.getRole();
-        console.log('*** EL ROL DETECTADO ES: ***', role);
+        
 
         if (role == 'admin') {
           this.router.navigate(['/admin-dashboard']);
