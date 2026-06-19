@@ -1,0 +1,83 @@
+.main-image-container {
+  height: 480px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 12px;
+}
+
+.main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background-color: #f8f9fa;
+  transition: transform 0.3s ease;
+}
+
+.main-image:hover {
+  transform: scale(1.02);
+}
+
+/* Contenedor de miniaturas */
+.thumbnails-container {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.thumbnails-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.thumbnails-container::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 3px;
+}
+
+.thumbnail-btn {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  background-color: #f8f9fa;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+}
+
+.thumbnail-btn:hover {
+  transform: scale(1.05);
+}
+
+.thumbnail-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Avatar del vendedor */
+.seller-avatar {
+  width: 56px;
+  height: 56px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Utilidades generales */
+.white-space-pre-line {
+  white-space: pre-line;
+}
+
+.border-transparent {
+  border-color: transparent !important;
+}
+
+.fw-black {
+  font-weight: 900;
+}
+
+.font-monospace {
+  font-family: var(--bs-font-monospace);
+}
+
+.bi-geo-alt-fill {
+  color: #dc3545;
+}

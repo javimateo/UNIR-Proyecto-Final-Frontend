@@ -1,1 +1,167 @@
-<p>home works!</p>
+<div class="row">
+  <!-- Banner de bienvenida -->
+  <div class="col-12 mb-4">
+    <div class="p-5 text-white bg-dark rounded-4 shadow-sm position-relative overflow-hidden hero-banner">
+      <div class="position-relative z-2">
+        <h1 class="display-5 fw-extrabold mb-2">Plataforma de Segunda Mano</h1>
+        <p class="fs-5 opacity-75 mb-0">Encuentra artículos increíbles a precios accesibles, o publica tus propios anuncios de forma fácil.</p>
+      </div>
+      <div class="hero-bg-overlay"></div>
+    </div>
+  </div>
+
+  <!-- Barra de búsqueda principal -->
+  <div class="col-12 mb-4">
+    <div class="card shadow-sm border-0 p-3 bg-white rounded-4">
+      <form (submit)="onSearch()" class="d-flex gap-2">
+        <div class="input-group">
+          <span class="input-group-text bg-light border-0"><i class="bi bi-search text-muted"></i></span>
+          <input 
+            type="text" 
+            [(ngModel)]="searchQuery" 
+            name="searchQuery" 
+            class="form-control bg-light border-0 py-3" 
+            placeholder="¿Qué estás buscando hoy? Escribe palabras clave..."
+            (input)="onSearch()"
+          >
+        </div>
+        <button type="submit" class="btn btn-success px-4 fw-bold rounded-3 shadow-sm d-flex align-items-center gap-2">
+          Buscar
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Panel lateral de filtros -->
+  <div class="col-lg-3 mb-4">
+    <div class="card shadow-sm border-0 rounded-4 p-4 sticky-top-filters bg-white">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold mb-0 text-dark">Filtros</h4>
+        <button (click)="clearFilters()" class="btn btn-link text-decoration-none text-danger p-0 fw-semibold small">
+          Limpiar todos
+        </button>
+      </div>
+
+      <!-- Filtro por Categoría -->
+      <div class="mb-4">
+        <label class="form-label fw-semibold text-muted small text-uppercase mb-2">Categoría</label>
+        <select 
+          [(ngModel)]="selectedCategory" 
+          class="form-select border-light-subtle bg-light py-2.5 rounded-3"
+          (change)="onSearch()"
+        >
+          <option [value]="0">Todas las categorías</option>
+          @for (cat of categories; track cat.id) {
+            <option [value]="cat.id">{{ cat.name }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Filtro por Estado de Conservación -->
+      <div class="mb-4">
+        <label class="form-label fw-semibold text-muted small text-uppercase mb-2">Estado</label>
+        <select 
+          [(ngModel)]="selectedCondition" 
+          class="form-select border-light-subtle bg-light py-2.5 rounded-3"
+          (change)="onSearch()"
+        >
+          <option value="">Cualquier estado</option>
+          @for (cond of conditions; track cond.value) {
+            <option [value]="cond.value">{{ cond.label }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Filtro por Rango de Precio -->
+      <div class="mb-4">
+        <label class="form-label fw-semibold text-muted small text-uppercase mb-2">Rango de Precio (€)</label>
+        <div class="row g-2">
+          <div class="col-6">
+            <input 
+              type="number" 
+              [(ngModel)]="minPrice" 
+              placeholder="Mín" 
+              class="form-control border-light-subtle bg-light py-2.5 rounded-3"
+              (input)="onSearch()"
+            >
+          </div>
+          <div class="col-6">
+            <input 
+              type="number" 
+              [(ngModel)]="maxPrice" 
+              placeholder="Máx" 
+              class="form-control border-light-subtle bg-light py-2.5 rounded-3"
+              (input)="onSearch()"
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cuadrícula de anuncios -->
+  <div class="col-lg-9">
+    <!-- Estado de carga -->
+    @if (isLoading) {
+      <div class="d-flex flex-column justify-content-center align-items-center py-5">
+        <div class="spinner-border text-success mb-3" role="status" style="width: 3rem; height: 3rem;">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="text-muted fw-semibold">Buscando los mejores artículos para ti...</p>
+      </div>
+    } @else {
+      <!-- Sin resultados -->
+      @if (items.length === 0) {
+        <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+          <div class="py-5">
+            <i class="bi bi-search fs-1 text-muted mb-3 d-block"></i>
+            <h3 class="fw-bold text-dark">No hay resultados</h3>
+            <p class="text-muted">No encontramos ningún anuncio que coincida con tus filtros de búsqueda.</p>
+            <button (click)="clearFilters()" class="btn btn-outline-success rounded-pill px-4 py-2 mt-2 fw-semibold">
+              Restablecer Filtros
+            </button>
+          </div>
+        </div>
+      } @else {
+        <!-- Grid de Anuncios -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+          @for (item of items; track item.id) {
+            <div class="col">
+              <app-item-card [item]="item"></app-item-card>
+            </div>
+          }
+        </div>
+
+        <!-- Paginación -->
+        @if (totalPages > 1) {
+          <nav class="d-flex justify-content-center mt-5">
+            <ul class="pagination pagination-rounded gap-1 shadow-sm bg-white p-2 rounded-pill">
+              <!-- Página Anterior -->
+              <li class="page-item" [class.disabled]="currentPage === 1">
+                <button (click)="changePage(currentPage - 1)" class="page-link rounded-circle border-0 d-flex align-items-center justify-content-center p-0" style="width: 40px; height: 40px;">
+                  <i class="bi bi-chevron-left"></i>
+                </button>
+              </li>
+
+              <!-- Números de Página -->
+              @for (p of [].constructor(totalPages); track $index) {
+                <li class="page-item" [class.active]="$index + 1 === currentPage">
+                  <button (click)="changePage($index + 1)" class="page-link rounded-circle border-0 d-flex align-items-center justify-content-center p-0" style="width: 40px; height: 40px;">
+                    {{ $index + 1 }}
+                  </button>
+                </li>
+              }
+
+              <!-- Página Siguiente -->
+              <li class="page-item" [class.disabled]="currentPage === totalPages">
+                <button (click)="changePage(currentPage + 1)" class="page-link rounded-circle border-0 d-flex align-items-center justify-content-center p-0" style="width: 40px; height: 40px;">
+                  <i class="bi bi-chevron-right"></i>
+                </button>
+              </li>
+            </ul>
+          </nav>
+        }
+      }
+    }
+  </div>
+</div>
