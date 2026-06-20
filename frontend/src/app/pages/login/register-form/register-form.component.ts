@@ -19,7 +19,7 @@ export class RegisterFormComponent {
 
   constructor() {
     this.registerForm = new FormGroup({
-      nombre: new FormControl('', [Validators.required, Validators.minLength(3)]),
+      username: new FormControl('', [Validators.required, Validators.minLength(3)]),
       apellido: new FormControl('', [Validators.required, Validators.minLength(3)]),
       email: new FormControl('', [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]),
       password: new FormControl('', [Validators.required, Validators.minLength(8)]),
@@ -41,6 +41,7 @@ export class RegisterFormComponent {
   async getDataForm() {
     if (this.registerForm.valid) {
       try {
+        console.log('📦 PAQUETE QUE ANGULAR ENVÍA AL BACKEND:')
         
         const { confirmPassword, ...formData } = this.registerForm.value;
 
@@ -67,6 +68,7 @@ export class RegisterFormComponent {
         });
       }
     } else {
+      this.registerForm.markAllAsTouched()
       Swal.fire('Formulario incompleto', 'Por favor, revisa los campos en rojo', 'info');
     }
   }

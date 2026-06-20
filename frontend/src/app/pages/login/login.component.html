@@ -1,13 +1,15 @@
 <article class="container mt-5" style="max-width: 550px;">
   <div class="card shadow">
     
+    <div class="w-100 d-flex justify-content-center">
+    </div>
     <div class="card-header bg-white pt-3 border-0">
       <div class="d-flex justify-content-center gap-2">
         
         <button 
           type="button"
           class="btn w-50 py-2 fw-bold"
-          [class.btn-primary]="mostrarLogin"
+          [class.btn-success]="mostrarLogin"
           [class.btn-light]="!mostrarLogin"
           (click)="mostrarLogin = true"
         >
@@ -17,7 +19,7 @@
         <button 
           type="button"
           class="btn w-50 py-2 fw-bold"
-          [class.btn-primary]="!mostrarLogin"
+          [class.btn-success]="!mostrarLogin"
           [class.btn-light]="mostrarLogin"
           (click)="mostrarLogin = false"
         >
