@@ -31,4 +31,14 @@ export class IUserServices {
   getById(id: number): Promise<IUser> {
     return lastValueFrom(this.httpClient.get<IUser>(`${this.baseUrl}/users/${id}`));
   }
+
+  async deleteById(usuarioId :number):Promise<IUser>{
+    try{
+
+     return await lastValueFrom(this.httpClient.delete<IUser>(`${this.baseUrl}/users/${usuarioId}`))
+    }catch (error){
+      throw error
+    }
+
+  }
 }

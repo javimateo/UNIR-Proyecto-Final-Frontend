@@ -1,1 +1,120 @@
-<p>usuario works!</p>
+<div class="container mt-3">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Gestión de Usuarios (Modo Simulado)</h2>
+    <span class="badge bg-secondary">Total: {{ totalUsuarios }}</span>
+  </div>
+  
+  <table class="table table-striped table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>Username</th>
+        <th>Apellido</th>
+        <th>Email</th>
+        <th>Rol</th>
+        <th>Status</th>
+        <th>Rol</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (usuario of listaUsuariosMostrar; track usuario.email) {
+        <tr>
+          <td>{{ usuario.username }}</td>
+          <td>{{ usuario.apellido }}</td>
+          <td>{{ usuario.email }}</td>
+          <td>{{usuario.role}}</td>
+          <td>{{usuario.status}}</td>
+          <td [ngClass]="{'bg-primary': usuario.role === 'admin', 'bg-info': usuario.role === 'moderator', 'bg-secondary' : usuario.role === 'user'}">{{usuario.role}}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-warning me-2" (click)="cambiarEstado(usuario.id)">
+              {{usuario.status === 'Activo' ? 'Bloquear' : 'Desbloquear'}}
+            </button>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-danger me-2" (click)="eliminarUser(usuario.id)">
+              Eliminar
+            </button>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-info me-2" (click)="seleccionarUsuarioParaEditar(usuario)">
+              Editar
+            </button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="3" class="text-center">No hay usuarios para mostrar.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  @if (usuariosSeleccionadosId !== null) {
+    <div class="card mt-4 shadow-sm border-warning">
+      <div class="card-header bg-warning text-dark fw-bold">
+        Modificar Información del Usuario (ID: {{ usuariosSeleccionadosId }})
+      </div>
+      <div class="card-body">
+        
+        <form [formGroup]="miFormularioEdicion" (ngSubmit)="guardarCambiosUsuario()">
+          <div class="row g-3">
+            
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">Username</label>
+              <input type="text" class="form-control" formControlName="username">
+              @if (miFormularioEdicion.get('username')?.touched && miFormularioEdicion.get('username')?.invalid) {
+                <small class="text-danger">Mínimo 3 caracteres.</small>
+              }
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">Apellido</label>
+              <input type="text" class="form-control" formControlName="apellido">
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">Correo Electrónico</label>
+              <input type="email" class="form-control" formControlName="email">
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label fw-semibold">Rol Asignado</label>
+              <select class="form-select" formControlName="role">
+                <option value="user">Usuario</option>
+                <option value="moderator">Moderador</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </div>
+
+          </div>
+
+          <div class="d-flex justify-content-end mt-3">
+            <button type="button" class="btn btn-secondary me-2" (click)="cancelarEdicion()">
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-warning">
+              Guardar Cambios
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+    </div>
+  }
+
+  <div class="d-flex justify-content-between align-items-center mt-3">
+    <button class="btn btn-outline-success" 
+            [disabled]="paginaActual === 1" 
+            (click)="(anteriorPagina())">
+       Anterior
+    </button>
+
+    <span class="fw-bold">Página {{ paginaActual }}</span>
+
+    <button class="btn btn-outline-success" 
+            [disabled]="(paginaActual * limitePorPagina) >= totalUsuarios" 
+            (click)="siguientePagina()">
+      Siguiente 
+    </button>
+  </div>
+</div>
