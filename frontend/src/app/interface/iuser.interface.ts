@@ -9,6 +9,13 @@ export interface IUser {
   createdAt?: Date;
 }
 
+export interface IUserEditForm{
+  username: string,
+  apellido: string,
+  email:string,
+  role: string
+}
+
 export interface IUserListResponse {
   page: number;
   per_page: number;

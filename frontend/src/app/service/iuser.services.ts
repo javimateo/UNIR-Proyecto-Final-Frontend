@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { IUser, IUserListResponse } from '../interface/iuser.interface';
+import { IUser, IUserEditForm, IUserListResponse } from '../interface/iuser.interface';
 import { lastValueFrom } from 'rxjs';
 
 @Injectable({
@@ -31,6 +31,10 @@ export class IUserServices {
   getById(id: number): Promise<IUser> {
     return lastValueFrom(this.httpClient.get<IUser>(`${this.baseUrl}/users/${id}`));
   }
+  async updateUser(usuarioId: number, datosEditados:IUserEditForm ):Promise<IUser>{
+    return await lastValueFrom(this.httpClient.put<IUser>(`${this.baseUrl}users/${usuarioId}`, datosEditados))
+
+    }
 
   async deleteById(usuarioId :number):Promise<IUser>{
     try{

@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { IUserServices } from '../../../../service/iuser.services';
-import { IUser } from '../../../../interface/iuser.interface';
+import { IUser, IUserEditForm } from '../../../../interface/iuser.interface';
 import { NgClass } from '@angular/common';
 import Swal from 'sweetalert2';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -218,7 +218,7 @@ seleccionarUsuarioParaEditar(usuario: any) {
       return;
     }
 
-    const datosEditados = this.miFormularioEdicion.value;
+    const datosEditados = this.miFormularioEdicion.value as IUserEditForm;
 
     const index = this.todosLosUsuariosFake.findIndex(u => u.id === this.usuariosSeleccionadosId);
     if (index !== -1) {
