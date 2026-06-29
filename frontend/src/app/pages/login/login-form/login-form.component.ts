@@ -14,6 +14,7 @@ import { firstValueFrom } from 'rxjs';
 export class LoginFormComponent {
   private router = inject(Router);
   private authService = inject(AuthServiceServices);
+
   loginForm: FormGroup;
 
   constructor() {
@@ -42,7 +43,6 @@ export class LoginFormComponent {
         await firstValueFrom(this.authService.getProfile());
 
         const role = this.authService.getRole();
-        
 
         if (role == 'admin') {
           this.router.navigate(['/admin-dashboard']);
@@ -59,3 +59,4 @@ export class LoginFormComponent {
     }
   }
 }
+

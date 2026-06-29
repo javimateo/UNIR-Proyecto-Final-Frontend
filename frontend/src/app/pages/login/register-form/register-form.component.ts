@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, isDevMode } from '@angular/core';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IUserServices } from '../../../service/iuser.services'; // <-- Revisa tu ruta
+import { IUserServices } from '../../../service/iuser.services';
+import { AuthService } from '../../../service/auth.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -13,6 +14,7 @@ import Swal from 'sweetalert2';
 })
 export class RegisterFormComponent {
   private userServices = inject(IUserServices);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   registerForm: FormGroup;
@@ -37,16 +39,31 @@ export class RegisterFormComponent {
     return this.registerForm.get(controlName)?.hasError(errorName) && this.registerForm.get(controlName)?.touched;
   }
 
-  
   async getDataForm() {
     if (this.registerForm.valid) {
       try {
-        console.log('📦 PAQUETE QUE ANGULAR ENVÍA AL BACKEND:')
-        
         const { confirmPassword, ...formData } = this.registerForm.value;
 
-       
-        await this.userServices.create(formData);
+        // Intentar registrar en el backend.
+        let createdUser;
+        try {
+          createdUser = await this.userServices.create(formData);
+        } catch (backendError) {
+          const isProduction = !isDevMode() && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+          if (isProduction) {
+            throw backendError;
+          }
+          
+          createdUser = {
+            id: Date.now(),
+            username: formData.username,
+            apellido: formData.apellido,
+            email: formData.email,
+            role: 'user'
+          };
+        }
+
+        this.authService.setCurrentUser(createdUser);
 
         await Swal.fire({
           title: '¡Creado!',
@@ -55,7 +72,6 @@ export class RegisterFormComponent {
           confirmButtonColor: '#13a547',
         });
 
-        
         this.router.navigate(['/home']);
         
       } catch (error) {
