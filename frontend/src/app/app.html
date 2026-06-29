@@ -33,7 +33,7 @@
           <div class="d-flex align-items-center gap-3">
             <div class="text-light d-none d-sm-block">
               <span class="opacity-75">Hola, </span>
-              <strong class="text-white">{{ authService.currentUser()?.nombre }}</strong>
+              <strong class="text-white">{{ authService.currentUser()?.username }}</strong>
             </div>
             
             <button (click)="logout()" class="btn btn-outline-danger btn-sm px-3 py-2 rounded-pill fw-semibold shadow-sm d-flex align-items-center gap-1">

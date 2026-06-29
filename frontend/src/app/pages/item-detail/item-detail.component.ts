@@ -67,7 +67,7 @@ export class ItemDetailComponent implements OnInit {
     }
 
     const { value: text } = await Swal.fire({
-      title: `Contactar a ${this.item?.user?.nombre || 'Vendedor'}`,
+      title: `Contactar a ${this.item?.user?.username || 'Vendedor'}`,
       input: 'textarea',
       inputLabel: 'Escribe tu mensaje para iniciar el chat',
       inputPlaceholder: 'Hola, estoy interesado en tu artículo...',

@@ -21,7 +21,7 @@ export class RegisterFormComponent {
 
   constructor() {
     this.registerForm = new FormGroup({
-      nombre: new FormControl('', [Validators.required, Validators.minLength(3)]),
+      username: new FormControl('', [Validators.required, Validators.minLength(3)]),
       apellido: new FormControl('', [Validators.required, Validators.minLength(3)]),
       email: new FormControl('', [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]),
       password: new FormControl('', [Validators.required, Validators.minLength(8)]),
@@ -56,7 +56,7 @@ export class RegisterFormComponent {
           
           createdUser = {
             id: Date.now(),
-            nombre: formData.nombre,
+            username: formData.username,
             apellido: formData.apellido,
             email: formData.email,
             role: 'user'
@@ -84,6 +84,7 @@ export class RegisterFormComponent {
         });
       }
     } else {
+      this.registerForm.markAllAsTouched()
       Swal.fire('Formulario incompleto', 'Por favor, revisa los campos en rojo', 'info');
     }
   }

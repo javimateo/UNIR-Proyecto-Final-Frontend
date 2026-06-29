@@ -28,7 +28,7 @@ export class AuthService {
   login(email: string): void {
     const user: Partial<IUser> = {
       id: 1,
-      nombre: 'Jonathan',
+      username: 'Jonathan',
       apellido: 'Mateo',
       email: email,
       role: 'user' // 'user' | 'moderator' | 'admin'

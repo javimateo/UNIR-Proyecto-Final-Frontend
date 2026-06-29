@@ -35,7 +35,7 @@ export class ItemService {
         'https://images.unsplash.com/photo-1632661674596-df8be070a5c5?w=500&auto=format&fit=crop&q=60',
         'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=500&auto=format&fit=crop&q=60'
       ],
-      user: { id: 1, nombre: 'Ana', email: 'ana@example.com' }
+      user: { id: 1, username: 'Ana', email: 'ana@example.com' }
     },
     {
       id: 2,
@@ -54,7 +54,7 @@ export class ItemService {
       photos: [
         'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=500&auto=format&fit=crop&q=60'
       ],
-      user: { id: 2, nombre: 'Carlos', email: 'carlos@example.com' }
+      user: { id: 2, username: 'Carlos', email: 'carlos@example.com' }
     },
     {
       id: 3,
@@ -73,7 +73,7 @@ export class ItemService {
       photos: [
         'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=500&auto=format&fit=crop&q=60'
       ],
-      user: { id: 1, nombre: 'Ana', email: 'ana@example.com' }
+      user: { id: 1, username: 'Ana', email: 'ana@example.com' }
     },
     {
       id: 4,
@@ -92,7 +92,7 @@ export class ItemService {
       photos: [
         'https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=500&auto=format&fit=crop&q=60'
       ],
-      user: { id: 3, nombre: 'David', email: 'david@example.com' }
+      user: { id: 3, username: 'David', email: 'david@example.com' }
     },
     {
       id: 5,
@@ -111,7 +111,7 @@ export class ItemService {
       photos: [
         'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=500&auto=format&fit=crop&q=60'
       ],
-      user: { id: 2, nombre: 'Carlos', email: 'carlos@example.com' }
+      user: { id: 2, username: 'Carlos', email: 'carlos@example.com' }
     }
   ];
 
@@ -222,7 +222,7 @@ export class ItemService {
         id: newId,
         created_at: new Date(),
         status: 'published',
-        user: { id: 1, nombre: 'Jonathan', email: 'jonathan@example.com' },
+        user: { id: 1, username: 'Jonathan', email: 'jonathan@example.com' },
         category_name: this.getCategoryNameById(item.category_id)
       };
       this.mockItems.unshift(newItem); // Añadir al inicio
