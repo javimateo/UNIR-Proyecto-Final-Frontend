@@ -1,1 +1,126 @@
-<p>home works!</p>
+<header class="header">
+
+  <div class="logo">
+    
+  </div>
+
+  <input
+    class="search"
+    type="text"
+    placeholder="Buscar televisores..."
+  >
+
+  <nav>
+    <a>Smart TV</a>
+    <a>OLED</a>
+    <a>QLED</a>
+    <a>Gaming</a>
+  </nav>
+
+  <button class="sell-btn">
+    Vender TV
+  </button>
+
+</header>
+
+<section class="hero">
+
+  <div class="hero-text">
+
+    <h1>
+      Encuentra la televisión perfecta al mejor precio
+    </h1>
+
+    <p>
+      Compra y vende televisores reacondicionados y de segunda mano
+      con garantía, seguridad y envío especializado.
+    </p>
+
+    <div class="hero-buttons">
+
+      <button class="primary">
+        Explorar ofertas
+      </button>
+
+      <button class="secondary">
+        Más información
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="hero-card">
+
+    <img
+      src="https://images.unsplash.com/photo-1593784991095-a205069470b6?w=1200"
+      alt="TV destacada"
+    >
+
+    <div class="featured-info">
+
+      <h3>LG OLED C3 65"</h3>
+
+      <span>1.200 €</span>
+
+    </div>
+
+  </div>
+
+</section>
+
+<section class="filters">
+
+  <button>Todos</button>
+  <button>Smart TV</button>
+  <button>OLED</button>
+  <button>QLED</button>
+  <button>Gaming</button>
+  <button>4K</button>
+
+</section>
+
+<section class="products">
+
+  @for(tv of televisores; track tv){
+
+  <div class="product-card">
+
+    <img [src]="tv.imagen" [alt]="tv.marca">
+
+    <div class="card-content">
+
+      <h3>{{tv.marca}}</h3>
+
+      <p>⭐ {{tv.estado}}</p>
+
+      <p>📍 {{tv.ubicacion}}</p>
+
+      <span>{{tv.precio}} €</span>
+
+    </div>
+
+  </div>
+
+  }
+
+</section>
+
+<section class="trust">
+
+  <div class="trust-card">
+    <h3>✔ Vendedores Verificados</h3>
+    <p>Todos los usuarios pasan por un proceso de validación.</p>
+  </div>
+
+  <div class="trust-card">
+    <h3>🔒 Pago Protegido</h3>
+    <p>Compra con total seguridad y protección.</p>
+  </div>
+
+  <div class="trust-card">
+    <h3>🚚 Envío Especializado</h3>
+    <p>Protección especial para televisores y pantallas grandes.</p>
+  </div>
+
+</section>
