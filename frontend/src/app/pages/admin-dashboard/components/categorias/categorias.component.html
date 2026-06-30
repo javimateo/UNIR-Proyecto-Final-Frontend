@@ -11,7 +11,7 @@
             
             <div class="mb-3">
               <label class="form-label fw-semibold">Nombre de la Categoría</label>
-              <input type="text" class="form-control" formControlName="nombre" placeholder="Ej: Deportes, Motor...">
+              <input type="text" class="form-control" formControlName="name" placeholder="Ej: Deportes, Motor...">
               @if (formCategoria.get('nombre')?.touched && formCategoria.get('nombre')?.invalid) {
                 <small class="text-danger">El nombre es obligatorio (mín. 3 letras).</small>
               }
@@ -19,7 +19,7 @@
 
             <div class="mb-3">
               <label class="form-label fw-semibold">Descripción Breve</label>
-              <textarea class="form-control" formControlName="descripcion" rows="3" placeholder="Describe qué artículos se publicarán aquí..."></textarea>
+              <textarea class="form-control" formControlName="description" rows="3" placeholder="Describe qué artículos se publicarán aquí..."></textarea>
               @if (formCategoria.get('descripcion')?.touched && formCategoria.get('descripcion')?.invalid) {
                 <small class="text-danger">La descripción es obligatoria.</small>
               }
@@ -34,53 +34,52 @@
       </div>
     </div>
 
-    <div class="col-md-8">
-      <div class="card shadow-sm">
-        <div class="card-header bg-dark text-white fw-bold d-flex justify-content-between align-items-center">
-          <span><i class="bi bi-tags-fill"></i> Catálogo de Categorías Activas</span>
-          <span class="badge bg-light text-dark">Total: {{ categoriesFake.length }}</span>
-        </div>
-        <div class="card-body p-0">
-          
-          <table class="table table-hover table-striped mb-0 valign-middle">
-            <thead class="table-light">
-              <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
-                <th class="text-center">Artículos</th>
-                <th class="text-center">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (categoria of categoriesFake; track categoria.id) {
-                <tr>
-                  <td><code>#{{ categoria.id }}</code></td>
-                  <td><strong>{{ categoria.name }}</strong></td>
-                  <td class="text-muted small">{{ categoria.description }}</td>
-                  <td class="text-center">
-                    <span class="badge rounded-pill bg-secondary">{{ categoria.totalArticulos }}</span>
-                  </td>
-                  <td class="text-center">
-                    <button class="btn btn-sm btn-outline-warning me-1" (click)="abrirModalEditar(categoria)">
-                      <i class="bi bi-pencil-square"></i> Editar
-                    </button>
-                    <button class="btn btn-sm btn-outline-danger" (click)="eliminarCategoria(categoria.id, categoria.name)">
-                      <i class="bi bi-trash">Eliminar</i>
-                    </button>
-                  </td>
-                </tr>
-              } @empty {
-                <tr>
-                  <td colspan="5" class="text-center py-4 text-muted">No existen categorías en la plataforma.</td>
-                </tr>
-              }
-            </tbody>
-          </table>
-
-        </div>
-      </div>
+<div class="col-md-8">
+  <div class="card shadow-sm">
+    <div class="card-header bg-dark text-white fw-bold d-flex justify-content-between align-items-center">
+      <span><i class="bi bi-tags-fill"></i> Catálogo de Categorías Activas</span>
+      <span class="badge bg-light text-dark">Total: {{ listaCategorias.length }}</span>
     </div>
+    <div class="card-body p-0">
+      
+      <table class="table table-hover table-striped mb-0 valign-middle">
+        <thead class="table-light">
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (categoria of listaCategorias; track categoria.id) {
+            <tr>
+              <td><code>#{{ categoria.id }}</code></td>
+              <td><strong>{{ categoria.name }}</strong></td>
+              <td class="text-muted small">{{ categoria.description }}</td>
+              <td class="text-center">
+                
+                <button class="btn btn-sm btn-outline-warning me-1" (click)="abrirModalEditar(categoria)">
+                  <i class="bi bi-pencil-square"></i> Editar
+                </button>
+                
+                <button class="btn btn-sm btn-outline-danger" (click)="eliminarCategoria(categoria.id!, categoria.name)">
+                  <i class="bi bi-trash"></i> Eliminar
+                </button>
+
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="text-center py-4 text-muted">No existen categorías en la plataforma.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+
+    </div>
+  </div>
+</div>
 
   </div>
 </div>

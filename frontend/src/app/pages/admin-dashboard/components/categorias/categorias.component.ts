@@ -14,113 +14,128 @@ import { CommonModule } from '@angular/common';
 })
 export class CategoriasComponent {
 
-private arrayCatService = inject (ICategoriaFormServices)
-private categories = signal <ICategoriaForm>
+private categoriaService = inject(ICategoriaFormServices);
 
- categoriesFake = [
-   {id: 1, name: 'Electrónica', description: 'Móviles, ordenadores, consolas y accesorios.', totalArticulos: 145 },
-    { id: 2, name: 'Ropa y Calzado', description: 'Moda de hombre, mujer, niños y complementos.', totalArticulos: 382 },
-    { id: 3, name: 'Libros y Música', description: 'Novelas, libros de texto, vinilos y CD.', totalArticulos: 92 },
-    { id: 4, name: 'Hogar y Decoración', description: 'Muebles, herramientas y utensilios de cocina.', totalArticulos: 210 }
-  ]
+  
+  listaCategorias: ICategoriaForm[] = [];
+  formCategoria!: FormGroup;
 
-
-
-  formCategoria!: FormGroup
-  categoriaEditandoId: number | null = null
-
-  ngOnInit(){
-    this.initFormulario()
+  ngOnInit() {
+    this.initFormulario();
+    this.obtenerCategorias(); 
   }
 
-  initFormulario(){
+  initFormulario() {
     this.formCategoria = new FormGroup({
-      name: new FormControl ('', [Validators.required, Validators.minLength(3)]),
-      description: new FormControl ( '', [Validators.required, Validators.maxLength(100)]),
+      name: new FormControl('', [Validators.required, Validators.minLength(3)]),
+      description: new FormControl('', [Validators.required])
+    });
+  }
+
+  
+  async obtenerCategorias() {
+    try {
       
-    })
-  }
-
-  agregarCategoria(){
-    if(this.formCategoria.invalid){
-      this.formCategoria.markAllAsTouched()
-      return
+      this.listaCategorias = await this.categoriaService.getAllPromises();
+    } catch (error) {
+      console.error('Error al cargar catálogo:', error);
+      Swal.fire('Error', 'No se pudieron recuperar las categorías del servidor.', 'error');
     }
-    const nuevosDatos = this.formCategoria.value as ICategoriaForm
-    const nuevoId = this.categoriesFake.length>0
-    ? Math.max(...this.categoriesFake.map(c => c.id)) +1 :1
-
-    this.categoriesFake.push({
-      id:nuevoId,
-      name: nuevosDatos.name,
-      description:nuevosDatos.description,
-      totalArticulos:nuevosDatos.totalArticulos
-
-
-    })
-    this.formCategoria.reset
-    
-    Swal.fire({
-      toast:true,
-      position: 'top-end',
-      icon: 'success',
-      title: 'categoría creada con éxito',
-      showConfirmButton:false,
-      timer: 2000
-
-    })
   }
+
+
+  async agregarCategoria() {
+    if (this.formCategoria.invalid) {
+      this.formCategoria.markAllAsTouched();
+      return;
+    }
+
+    try {
+      const nuevaCat = this.formCategoria.value as ICategoriaForm;
+      
+      
+      await this.categoriaService.create(nuevaCat);
+      
+      this.formCategoria.reset();
+      await this.obtenerCategorias(); 
+
+      Swal.fire({
+        icon: 'success',
+        title: '¡Creada!',
+        text: 'Categoría guardada con éxito.',
+        timer: 1500,
+        showConfirmButton: false
+      });
+    } catch (error) {
+      Swal.fire('Error', 'No se pudo crear la categoría.', 'error');
+    }
+  }
+
   eliminarCategoria(id: number, nombre: string) {
     Swal.fire({
       title: `¿Eliminar "${nombre}"?`,
-      text: "¡Cuidado! Si eliminas la categoría, los artículos asociados podrían quedarse sin clasificación.",
+      text: "Esta acción borrará la categoría de la base de datos de forma permanente.",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
       cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Sí, borrar catálogo',
+      confirmButtonText: 'Sí, eliminar',
       cancelButtonText: 'Cancelar'
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        // Filtramos para removerla
-        this.categoriesFake = this.categoriesFake.filter(c => c.id !== id);
-
-        Swal.fire('¡Borrada!', 'La categoría ha sido eliminada.', 'success');
-      }
-    });
-  }
-
-  abrirModalEditar(categoria: any) {
-    Swal.fire({
-      title: 'Editar Categoría',
-      html:
-        `<input id="swal-input1" class="swal2-input" placeholder="Nombre" value="${categoria.nombre}">` +
-        `<input id="swal-input2" class="swal2-input" placeholder="Descripción" value="${categoria.descripcion}">`,
-      focusConfirm: false,
-      showCancelButton: true,
-      confirmButtonText: 'Guardar cambios',
-      cancelButtonText: 'Cancelar',
-      preConfirm: () => {
-        const nombreInput = (document.getElementById('swal-input1') as HTMLInputElement).value;
-        const descInput = (document.getElementById('swal-input2') as HTMLInputElement).value;
-        
-        if (!nombreInput || !descInput) {
-          Swal.showValidationMessage('Por favor rellena todos los campos');
-        }
-        return { nombre: nombreInput, descripcion: descInput };
-      }
-    }).then((result) => {
-      if (result.isConfirmed && result.value) {
-        // Buscamos la categoría local y actualizamos sus campos
-        const cat = this.categoriesFake.find(c => c.id === categoria.id);
-        if (cat) {
-          cat.name = result.value.nombre;
-          cat.description = result.value.descripcion;
+        try {
+          // Ejecutamos el delete asíncrono
+          await this.categoriaService.delete(id);
+          await this.obtenerCategorias(); // Refrescamos la tabla
           
-          Swal.fire('¡Actualizada!', 'Los cambios se han guardado.', 'success');
+          Swal.fire('¡Eliminada!', 'La categoría ha sido borrada.', 'success');
+        } catch (error) {
+          Swal.fire('Error', 'No se pudo eliminar el registro.', 'error');
         }
       }
     });
   }
+
+  abrirModalEditar(categoria: ICategoriaForm) {
+  Swal.fire({
+    title: 'Modificar Categoría',
+    html:
+      `<input id="swal-input1" class="swal2-input" placeholder="Nombre" value="${categoria.name}">` +
+      `<input id="swal-input2" class="swal2-input" placeholder="Descripción" value="${categoria.description}">`,
+    focusConfirm: false,
+    showCancelButton: true,
+    confirmButtonText: 'Guardar cambios',
+    cancelButtonText: 'Cancelar',
+    preConfirm: () => {
+      const nameInput = (document.getElementById('swal-input1') as HTMLInputElement).value;
+      const descInput = (document.getElementById('swal-input2') as HTMLInputElement).value;
+      
+      if (!nameInput || !descInput) {
+        Swal.showValidationMessage('Ambos campos son obligatorios');
+      }
+      return { name: nameInput, description: descInput };
+    }
+  }).then(async (result) => {
+    if (result.isConfirmed && result.value) {
+      try {
+        
+        const categoriaEditada: ICategoriaForm = {
+          name: result.value.name,
+          description: result.value.description
+        };
+
+        
+        await this.categoriaService.update(categoria.id!, categoriaEditada);
+        
+        
+        await this.obtenerCategorias();
+        
+        Swal.fire('¡Actualizada!', 'Los cambios se guardaron en la base de datos.', 'success');
+      } catch (error) {
+        Swal.fire('Error', 'No se pudieron salvar los cambios.', 'error');
+      }
+    }
+  });
+}
 
 }
