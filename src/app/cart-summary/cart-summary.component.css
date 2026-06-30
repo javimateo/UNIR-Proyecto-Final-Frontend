@@ -1,0 +1,130 @@
+.summary-container {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 20px;
+}
+
+h3 {
+  font-size: 1.3rem;
+  color: #2d3748;
+  margin: 0 0 20px 0;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: #4a5568;
+  font-size: 1rem;
+}
+
+.discount-label {
+  color: #38a169;
+}
+
+.discount-amount {
+  color: #38a169;
+  font-weight: 500;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid #edf2f7;
+  margin: 15px 0;
+}
+
+.total-row {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 25px;
+}
+
+.total-price {
+  color: #3182ce;
+}
+
+.input-section {
+  margin-bottom: 20px;
+}
+
+.input-section label {
+  display: block;
+  font-size: 0.85rem;
+  color: #718096;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.input-group {
+  display: flex;
+  gap: 8px;
+}
+
+.input-group input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input-group input:focus {
+  border-color: #3182ce;
+}
+
+.input-group button {
+  background: #edf2f7;
+  border: 1px solid #cbd5e0;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #4a5568;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.input-group button:hover {
+  background: #e2e8f0;
+}
+
+.success-msg {
+  font-size: 0.8rem;
+  color: #38a169;
+  margin: 5px 0 0 0;
+}
+
+.error-msg {
+  font-size: 0.8rem;
+  color: #e53e3e;
+  margin: 5px 0 0 0;
+}
+
+.btn-checkout {
+  width: 100%;
+  background: #3182ce;
+  color: #ffffff;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-top: 10px;
+}
+
+.btn-checkout:hover:not(:disabled) {
+  background: #2b6cb0;
+}
+
+.btn-checkout:disabled {
+  background: #cbd5e0;
+  cursor: not-allowed;
+}

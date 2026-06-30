@@ -1,0 +1,26 @@
+<div class="cart-container">
+  <h2>Tu Carrito de Compra</h2>
+  
+  <div *ngIf="items.length === 0" class="empty-cart">
+    <p>No hay productos en el carrito.</p>
+  </div>
+
+  <div *ngIf="items.length > 0" class="cart-items-list">
+    <div *ngFor="let item of items" class="cart-item">
+      <img [src]="item.image" [alt]="item.name" class="item-image">
+      
+      <div class="item-details">
+        <h3>{{ item.name }}</h3>
+        <p *ngIf="item.variation" class="item-variation">{{ item.variation }}</p>
+        <p class="item-quantity">Cantidad: {{ item.quantity }}</p>
+      </div>
+      
+      <div class="item-price-actions">
+        <span class="item-price">{{ item.price * item.quantity | currency:'EUR' }}</span>
+        <button (click)="onRemoveItem(item.id)" class="btn-delete" title="Eliminar producto">
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
