@@ -1,0 +1,80 @@
+<div class="container">
+
+    <h1>Gestión de Incidencias</h1>
+
+    <p class="subtitle">
+
+        Revisa las incidencias abiertas entre compradores y vendedores.
+
+    </p>
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th>ID</th>
+                <th>Comprador</th>
+                <th>Vendedor</th>
+                <th>Asunto</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th></th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+        @for(incidencia of incidencias; track incidencia.id){
+
+            <tr>
+
+                <td>{{incidencia.id}}</td>
+
+                <td>{{incidencia.comprador}}</td>
+
+                <td>{{incidencia.vendedor}}</td>
+
+                <td>{{incidencia.asunto}}</td>
+
+                <td>{{incidencia.fecha}}</td>
+
+                <td>
+
+                    <span
+                    [class.open]="incidencia.estado=='Abierta'"
+                    [class.review]="incidencia.estado=='En revisión'"
+                    [class.closed]="incidencia.estado=='Resuelta'">
+
+                        {{incidencia.estado}}
+
+                    </span>
+
+                </td>
+
+                <td>
+
+                    @if(incidencia.estado!='Resuelta'){
+
+                    <button (click)="resolver(incidencia)">
+
+                        Resolver
+
+                    </button>
+
+                    }
+
+                </td>
+
+            </tr>
+
+        }
+
+        </tbody>
+
+    </table>
+
+</div>

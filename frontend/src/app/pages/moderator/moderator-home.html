@@ -1,0 +1,53 @@
+<div class="container">
+
+    <h1>Centro de Moderación</h1>
+
+    <p class="welcome">
+        Bienvenido al área de moderación.
+        Desde aquí podrás revisar anuncios reportados,
+        gestionar incidencias y consultar tu historial.
+    </p>
+
+    <section class="summary">
+
+        <div class="card">
+
+            <h2>{{reportesPendientes}}</h2>
+
+            <p>Artículos pendientes de revisión</p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>{{incidenciasAbiertas}}</h2>
+
+            <p>Incidencias abiertas</p>
+
+        </div>
+
+    </section>
+
+    <section class="actions">
+
+        <a routerLink="/reported-products">
+
+            Revisar artículos reportados
+
+        </a>
+
+        <a routerLink="/incidents">
+
+            Gestionar incidencias
+
+        </a>
+
+        <a routerLink="/history">
+
+            Ver historial
+
+        </a>
+
+    </section>
+
+</div>

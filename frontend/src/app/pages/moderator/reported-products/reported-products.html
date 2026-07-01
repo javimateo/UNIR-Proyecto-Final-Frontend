@@ -1,0 +1,77 @@
+<div class="container">
+
+<h1>Artículos reportados</h1>
+
+<p class="subtitle">
+
+Revisa los anuncios reportados por los usuarios y decide si deben mantenerse publicados o retirarse.
+
+</p>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Producto</th>
+
+<th>Vendedor</th>
+
+<th>Motivo</th>
+
+<th>Fecha</th>
+
+<th>Estado</th>
+
+<th></th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+@for(reporte of reportes; track reporte.id){
+
+<tr>
+
+<td>{{reporte.producto}}</td>
+
+<td>{{reporte.vendedor}}</td>
+
+<td>{{reporte.motivo}}</td>
+
+<td>{{reporte.fecha}}</td>
+
+<td>
+
+<span class="estado">
+
+{{reporte.estado}}
+
+</span>
+
+</td>
+
+<td>
+
+<a
+routerLink="/report-detail"
+class="btn">
+
+Revisar
+
+</a>
+
+</td>
+
+</tr>
+
+}
+
+</tbody>
+
+</table>
+
+</div>
