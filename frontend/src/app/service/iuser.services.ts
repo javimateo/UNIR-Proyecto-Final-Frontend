@@ -45,10 +45,17 @@ export class IUserServices {
     return await lastValueFrom(this.httpClient.delete<IUser>(`${this.baseUrl}/users/${usuarioId}`, { headers }));
   }
 
-  updateRole(usuarioId: number, nuevoRol: string): Promise<IUser> {
+  async updateRole(usuarioId: number, nuevoRol: string): Promise<IUser> {
     const token = localStorage.getItem('token');
     const headers = { Authorization: `Bearer ${token}` };
     const body = { role: nuevoRol };
-    return lastValueFrom(this.httpClient.patch<IUser>(`${this.baseUrl}/users/${usuarioId}/role`, body, { headers }));
+    return await lastValueFrom(this.httpClient.patch<IUser>(`${this.baseUrl}/users/${usuarioId}/role`, body, { headers }));
+  }
+
+  async updateStatus(usuarioId: number, nuevoEstado: string): Promise<IUser> {
+    const token = localStorage.getItem('token');
+    const headers = { Authorization: `Bearer ${token}` };
+    const body = { status: nuevoEstado };
+    return await lastValueFrom(this.httpClient.patch<IUser>(`${this.baseUrl}/users/${usuarioId}/status`, body, { headers }));
   }
 }

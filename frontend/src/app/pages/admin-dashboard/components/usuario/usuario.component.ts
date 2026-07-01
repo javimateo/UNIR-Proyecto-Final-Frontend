@@ -45,33 +45,34 @@ export class UsuarioComponent {
     }
   }
 
-  async cambiarEstado(usuario: IUser) {
+ async cambiarEstado(usuario: IUser) {
+    console.log(`Intentando cambiar estado del usuario ${usuario.username}...`);
+    
     try {
+      
       const nuevoEstado = usuario.status === 'active' ? 'blocked' : 'active';
-      // Pasamos los datos obligatorios para cumplir con IUserEditForm
-      const datosActualizados = {
-        username: usuario.username,
-        apellido: usuario.apellido || '',
-        email: usuario.email,
-        role: usuario.role,
-        status: nuevoEstado
-      };
-
-      await this.userService.updateUser(usuario.id, datosActualizados as any);
-      await this.cargarUsuarios();
+      
+      
+      await this.userService.updateStatus(usuario.id, nuevoEstado);
 
       Swal.fire({
         toast: true,
         position: 'top-end',
         icon: 'success',
-        title: `Usuario modificado a ${nuevoEstado} con éxito`,
+        title: `Usuario ${nuevoEstado === 'active' ? 'desbloqueado' : 'bloqueado'} con éxito`,
         showConfirmButton: false,
         timer: 2500,
         timerProgressBar: true,
       });
+
     } catch (error) {
       console.error('Error al cambiar estado:', error);
-      Swal.fire('Error', 'No se pudo cambiar el estado', 'error');
+      Swal.fire('Error', 'Hubo un problema de conexión al cambiar el estado.', 'error');
+      
+    } finally {
+      
+      console.log('Refrescando usuarios desde la base de datos...');
+      await this.cargarUsuarios();
     }
   }
 
@@ -96,18 +97,18 @@ export class UsuarioComponent {
         const datosEditados = this.miFormularioEdicion.value;
         console.log('Datos enviados a updateUser:', datosEditados);
 
-        // 1. Actualiza campos generales (username, email, apellido)
+        
         await this.userService.updateUser(this.usuariosSeleccionadosId, datosEditados);
 
-        // 2. ¡LLAMADA CLAVE! Forzamos la actualización del Rol con su método exclusivo
+        
         console.log(`Enviando nuevo rol '${datosEditados.role}' al endpoint de roles...`);
         await this.userService.updateRole(this.usuariosSeleccionadosId, datosEditados.role);
 
-        // Limpieza del formulario
+        
         this.usuariosSeleccionadosId = null;
         this.miFormularioEdicion.reset();
 
-        // Recargamos la tabla para ver los cambios reflejados
+        
         await this.cargarUsuarios();
 
         Swal.fire({
