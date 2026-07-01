@@ -1,0 +1,63 @@
+<div class="container">
+
+    <div class="card">
+
+        <h1>Notificar al vendedor</h1>
+
+        <p class="subtitle">
+
+            Informa al vendedor de la decisión tomada tras la revisión del anuncio.
+
+        </p>
+
+        @if(!enviada){
+
+        <div class="form-group">
+
+            <label>Asunto</label>
+
+            <input
+            type="text"
+            [(ngModel)]="asunto"
+            placeholder="Ej.: Resolución del reporte de su anuncio">
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Mensaje</label>
+
+            <textarea
+            rows="8"
+            [(ngModel)]="mensaje"
+            placeholder="Escriba aquí el mensaje que recibirá el vendedor..."></textarea>
+
+        </div>
+
+        <button (click)="enviar()">
+
+            Enviar notificación
+
+        </button>
+
+        }
+
+        @if(enviada){
+
+        <div class="success">
+
+            <h2>✅ Notificación enviada correctamente</h2>
+
+            <p>
+
+                El vendedor recibirá el mensaje en su buzón de la plataforma.
+
+            </p>
+
+        </div>
+
+        }
+
+    </div>
+
+</div>
