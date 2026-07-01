@@ -7,6 +7,7 @@ import { ReportDetailComponent } from './pages/moderator/report-detail/report-de
 import { IncidentsComponent } from './pages/moderator/incidents/incidents';
 import { HistoryComponent } from './pages/moderator/history/history';
 import { NotificationComponent } from './pages/moderator/notification/notification';
+import { PaymentComponent } from './pages/payment/payment';
 
 export const routes: Routes = [
 
@@ -27,6 +28,8 @@ export const routes: Routes = [
   {path:"history", component:HistoryComponent},
 
   {path:'notification', component:NotificationComponent},
+
+  {path: 'payment', component: PaymentComponent},
   
 
 ];
