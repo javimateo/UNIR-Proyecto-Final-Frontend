@@ -165,22 +165,18 @@ export class ItemDetailComponent implements OnInit {
 
   // Verificar si es favorito
   isFavorite(): boolean {
-    if (!this.authService.isLoggedIn() || !this.item) return false;
+    if (!this.item) return false;
     const currentUser = this.authService.currentUser();
-    const favKey = `favs_${currentUser?.username || 'global'}`;
+    const favKey = currentUser ? `favs_${currentUser.username}` : 'favs_guest';
     const savedFavs: number[] = JSON.parse(localStorage.getItem(favKey) || '[]');
     return savedFavs.includes(this.item.id!);
   }
 
   // Alternar favorito
   toggleFavorite(): void {
-    if (!this.authService.isLoggedIn()) {
-      Swal.fire('Inicia sesión', 'Debes iniciar sesión para guardar favoritos.', 'info');
-      return;
-    }
     if (!this.item || !this.item.id) return;
     const currentUser = this.authService.currentUser();
-    const favKey = `favs_${currentUser?.username || 'global'}`;
+    const favKey = currentUser ? `favs_${currentUser.username}` : 'favs_guest';
     let savedFavs: number[] = JSON.parse(localStorage.getItem(favKey) || '[]');
 
     if (savedFavs.includes(this.item.id)) {

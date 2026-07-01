@@ -20,9 +20,8 @@ export class ItemCardComponent {
 
   // Helper para verificar si está marcado como favorito
   isFavorite(): boolean {
-    if (!this.authService.isLoggedIn()) return false;
     const currentUser = this.authService.currentUser();
-    const favKey = `favs_${currentUser?.username || 'global'}`;
+    const favKey = currentUser ? `favs_${currentUser.username}` : 'favs_guest';
     const savedFavs: number[] = JSON.parse(localStorage.getItem(favKey) || '[]');
     const id = this.item().id;
     return id !== undefined && savedFavs.includes(id);
@@ -31,12 +30,8 @@ export class ItemCardComponent {
   // Alternar el estado de favorito
   toggleFavorite(event: Event): void {
     event.stopPropagation();
-    if (!this.authService.isLoggedIn()) {
-      Swal.fire('Inicia sesión', 'Debes iniciar sesión para guardar favoritos.', 'info');
-      return;
-    }
     const currentUser = this.authService.currentUser();
-    const favKey = `favs_${currentUser?.username || 'global'}`;
+    const favKey = currentUser ? `favs_${currentUser.username}` : 'favs_guest';
     let savedFavs: number[] = JSON.parse(localStorage.getItem(favKey) || '[]');
     const id = this.item().id;
     if (id === undefined) return;
