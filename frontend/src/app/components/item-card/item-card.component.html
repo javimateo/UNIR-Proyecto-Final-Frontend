@@ -7,6 +7,16 @@
     </span>
   </div>
 
+  <!-- Botón de Like (Corazón) en la esquina superior derecha -->
+  <div class="position-absolute top-0 end-0 m-3 z-2">
+    <button (click)="toggleFavorite($event)" 
+            class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center fav-btn" 
+            [class.text-danger]="isFavorite()"
+            style="width: 36px; height: 36px; border: none; cursor: pointer;">
+      <i class="bi" [ngClass]="isFavorite() ? 'bi-heart-fill' : 'bi-heart'"></i>
+    </button>
+  </div>
+
   <!-- Imagen del Producto -->
   <div class="card-img-container position-relative overflow-hidden bg-light">
     @if (item().photos && item().photos!.length > 0) {

@@ -162,4 +162,48 @@ export class ItemDetailComponent implements OnInit {
     const currentUser = this.authService.currentUser();
     return !!currentUser && !!this.item && this.item.user_id === currentUser.id;
   }
+
+  // Verificar si es favorito
+  isFavorite(): boolean {
+    if (!this.authService.isLoggedIn() || !this.item) return false;
+    const currentUser = this.authService.currentUser();
+    const favKey = `favs_${currentUser?.username || 'global'}`;
+    const savedFavs: number[] = JSON.parse(localStorage.getItem(favKey) || '[]');
+    return savedFavs.includes(this.item.id!);
+  }
+
+  // Alternar favorito
+  toggleFavorite(): void {
+    if (!this.authService.isLoggedIn()) {
+      Swal.fire('Inicia sesión', 'Debes iniciar sesión para guardar favoritos.', 'info');
+      return;
+    }
+    if (!this.item || !this.item.id) return;
+    const currentUser = this.authService.currentUser();
+    const favKey = `favs_${currentUser?.username || 'global'}`;
+    let savedFavs: number[] = JSON.parse(localStorage.getItem(favKey) || '[]');
+
+    if (savedFavs.includes(this.item.id)) {
+      savedFavs = savedFavs.filter(favId => favId !== this.item!.id);
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Eliminado de favoritos',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    } else {
+      savedFavs.push(this.item.id);
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'Añadido a favoritos',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    }
+    localStorage.setItem(favKey, JSON.stringify(savedFavs));
+  }
 }
