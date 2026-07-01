@@ -62,3 +62,15 @@
 .bi-geo-alt-fill {
   color: #dc3545;
 }
+
+.fav-btn {
+  transition: all 0.2s ease-in-out !important;
+  z-index: 5 !important;
+  color: #6c757d;
+}
+
+.fav-btn:hover {
+  transform: scale(1.15) !important;
+  background-color: #ffffff !important;
+}
+
