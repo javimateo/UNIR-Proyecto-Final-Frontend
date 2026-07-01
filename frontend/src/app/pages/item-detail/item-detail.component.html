@@ -1,0 +1,164 @@
+<div class="container my-4">
+  <!-- Botón Volver -->
+  <div class="mb-4">
+    <a routerLink="/home" class="btn btn-link text-decoration-none text-secondary p-0 fw-semibold d-inline-flex align-items-center gap-1">
+      <i class="bi bi-arrow-left"></i> Volver al listado
+    </a>
+  </div>
+
+  @if (isLoading) {
+    <!-- Spinner de carga -->
+    <div class="d-flex flex-column justify-content-center align-items-center py-5">
+      <div class="spinner-border text-success mb-3" role="status" style="width: 3rem; height: 3rem;">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
+      <p class="text-muted fw-semibold">Cargando detalles del anuncio...</p>
+    </div>
+  } @else if (item) {
+    <div class="row g-4">
+      
+      <!-- Columna Izquierda: Galería e Información básica -->
+      <div class="col-lg-8">
+        
+        <!-- Galería de fotos -->
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white p-3 mb-4">
+          <!-- Alerta de Revisión / Reporte -->
+          @if (item.status === 'under_review') {
+            <div class="alert alert-warning d-flex align-items-center gap-2 border-0 rounded-3 mb-3" role="alert">
+              <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+              <div>
+                Este artículo ha sido reportado y se encuentra actualmente <strong>En revisión</strong> por el equipo de moderación.
+              </div>
+            </div>
+          }
+
+          <!-- Foto principal activa -->
+          <div class="main-image-container rounded-3 bg-light overflow-hidden position-relative">
+            @if (activePhoto) {
+              <img [src]="activePhoto" [alt]="item.title" class="main-image">
+            } @else {
+              <div class="d-flex flex-column justify-content-center align-items-center h-100 text-muted py-5">
+                <i class="bi bi-image fs-1 mb-2"></i>
+                <span>Sin imágenes disponibles</span>
+              </div>
+            }
+          </div>
+
+          <!-- Miniaturas de fotos -->
+          @if (item.photos && item.photos.length > 1) {
+            <div class="thumbnails-container d-flex gap-2 mt-3 overflow-x-auto pb-1">
+              @for (photo of item.photos; track photo) {
+                <button 
+                  (click)="setActivePhoto(photo)" 
+                  class="thumbnail-btn rounded-2 overflow-hidden border-2 p-0"
+                  [class.border-success]="activePhoto === photo"
+                  [class.border-transparent]="activePhoto !== photo"
+                >
+                  <img [src]="photo" [alt]="item.title" class="thumbnail-image">
+                </button>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Descripción completa -->
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
+          <h4 class="fw-bold text-dark border-bottom border-light pb-3 mb-3">Descripción</h4>
+          <p class="text-secondary lh-lg mb-0 white-space-pre-line">
+            {{ item.description || 'El vendedor no ha especificado ninguna descripción para este artículo.' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Columna Derecha: Precio, Detalles y Vendedor -->
+      <div class="col-lg-4">
+        
+        <!-- Tarjeta de Precio e Info de Compra -->
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-4 mb-4">
+          <span class="text-uppercase font-monospace text-primary fw-bold tracking-wider small mb-2 d-block">
+            {{ item.category_name || 'Otros' }}
+          </span>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="display-6 fw-black text-success font-monospace mb-0">
+              {{ item.price | currency:'EUR':'symbol':'1.2-2':'es-ES' }}
+            </h2>
+            <button (click)="toggleFavorite()" 
+                    class="btn rounded-circle p-0 d-flex align-items-center justify-content-center border-0 bg-light-subtle shadow-sm hover-scale"
+                    style="width: 42px; height: 42px; cursor: pointer; transition: transform 0.2s;"
+                    [class.text-danger]="isFavorite()"
+                    [class.text-secondary]="!isFavorite()"
+                    [title]="isFavorite() ? 'Quitar de favoritos' : 'Añadir a favoritos'">
+              <i class="bi fs-4" [ngClass]="isFavorite() ? 'bi-heart-fill' : 'bi-heart'"></i>
+            </button>
+          </div>
+
+          <hr class="border-light-subtle my-3">
+
+          <div class="d-flex flex-column gap-3 mb-4">
+            <!-- Estado de conservación -->
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="text-muted small">Estado:</span>
+              <span class="badge px-3 py-1.5 rounded-pill font-monospace fw-semibold" [ngClass]="getConditionClass(item.item_condition)">
+                {{ getConditionLabel(item.item_condition) }}
+              </span>
+            </div>
+
+            <!-- Ubicación -->
+            @if (item.location) {
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="text-muted small">Ubicación:</span>
+                <span class="fw-semibold text-dark d-flex align-items-center gap-1">
+                  <i class="bi bi-geo-alt-fill text-danger"></i> {{ item.location }}
+                </span>
+              </div>
+            }
+
+            <!-- Fecha de publicación -->
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="text-muted small">Publicado:</span>
+              <span class="fw-semibold text-secondary">{{ item.created_at | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+
+          <!-- Acciones Principales -->
+          <div class="d-grid gap-2">
+            @if (isOwner()) {
+              <!-- Si soy el propietario -->
+              <a [routerLink]="['/anuncio/editar', item.id]" class="btn btn-success py-2.5 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm">
+                <i class="bi bi-pencil-square"></i> Editar Anuncio
+              </a>
+            } @else {
+              <!-- Si NO soy el propietario -->
+              <button (click)="onContact()" class="btn btn-success py-2.5 rounded-3 fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm" [disabled]="item.status === 'sold'">
+                <i class="bi bi-chat-dots-fill"></i> 
+                {{ item.status === 'sold' ? 'Artículo Vendido' : 'Contactar con el vendedor' }}
+              </button>
+
+              <button (click)="onReport()" class="btn btn-outline-danger py-2.5 rounded-3 fw-semibold d-flex align-items-center justify-content-center gap-2 btn-sm border-0 mt-1" [disabled]="item.status === 'under_review'">
+                <i class="bi bi-flag-fill"></i> Reportar este anuncio
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Tarjeta del Vendedor -->
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
+          <h5 class="fw-bold text-dark mb-4">Datos del vendedor</h5>
+          
+          <div class="d-flex align-items-center gap-3">
+            <!-- Avatar / Inicial del Vendedor -->
+            <div class="seller-avatar bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center fw-bold fs-4">
+              {{ (item.user?.username || 'V')[0].toUpperCase() }}
+            </div>
+            
+            <div>
+              <h6 class="fw-bold mb-1 text-dark">{{ item.user?.username || 'Vendedor' }} {{ item.user?.apellido || '' }}</h6>
+              <p class="text-muted small mb-0">{{ item.user?.email || 'contacto@segundamano.com' }}</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  }
+</div>

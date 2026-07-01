@@ -1,0 +1,49 @@
+.upload-zone {
+  border: 2px dashed rgba(25, 135, 84, 0.4);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.upload-zone:hover {
+  background-color: rgba(25, 135, 84, 0.03) !important;
+  border-color: #198754;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Vista previa de imágenes */
+.preview-img-card {
+  height: 120px;
+  background-color: #f8f9fa;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease;
+}
+
+.preview-img-card:hover {
+  transform: scale(1.03);
+}
+
+.preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Formularios de Bootstrap */
+.form-control, .form-select, .input-group-text {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus, .form-select:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.15);
+  background-color: #ffffff;
+}
+
+.invalid-feedback {
+  font-weight: 500;
+}

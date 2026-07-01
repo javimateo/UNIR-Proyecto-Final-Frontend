@@ -8,7 +8,7 @@ import { lastValueFrom } from 'rxjs';
 })
 export class IUserServices {
   private httpClient = inject(HttpClient);
-  private baseUrl = 'https://localhost:3000/api/users';
+  private baseUrl = 'http://localhost:3000/api/auth/register';
 
   getAllPromises(url: string= ''): Promise<IUserListResponse> {
     const miUrl = (url === "") ? this.baseUrl : url;
@@ -21,7 +21,7 @@ export class IUserServices {
 
    create(formValue: IUser): Promise<IUser> {
     const userToSave: Partial<IUser> = {
-      nombre: formValue.nombre,
+      username: formValue.username,
       apellido: formValue.apellido,
       email: formValue.email,
       password: formValue.password

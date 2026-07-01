@@ -7,11 +7,14 @@
       formControlName="email" 
       class="form-control"
       placeholder="Introduce tu correo"
-      [class.is-invalid]="checkControl('email', 'required') || checkControl('email', 'pattern')"
+      
     />
-    <div class="invalid-feedback">
-      Por favor, introduce un correo electrónico válido.
-    </div>
+    @if(checkControl('email','required')){
+      <p class="error">Campo obligatorio</p>
+    }
+    @if (checkControl('email','pattern')) {
+      <p class="error">El email no es válido</p>
+    }
   </div>
 
   <div class="mb-4">
@@ -21,11 +24,14 @@
       formControlName="password" 
       class="form-control"
       placeholder="Introduce tu contraseña"
-      [class.is-invalid]="checkControl('password', 'required') || checkControl('password', 'minlength')"
+      
     />
-    <div class="invalid-feedback">
-      La contraseña debe tener al menos 8 caracteres.
-    </div>
+    @if (checkControl('password','required')) {
+      <p class="error">Contraseña requerida</p>
+    }
+    @if (checkControl('password','minlength')) {
+      <p class="error">La contraseña debe tener al menos 8 carácteres</p>
+    }
   </div>
 
   <div class="d-grid">

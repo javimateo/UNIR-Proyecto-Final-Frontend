@@ -1,0 +1,76 @@
+<div class="card h-100 product-card shadow-sm border-0 transition-all">
+  <!-- Imagen del Producto -->
+  <div class="card-img-container position-relative overflow-hidden bg-light">
+    @if (item().photos && item().photos!.length > 0) {
+      <img [src]="item().photos![0]" 
+           [alt]="item().title" 
+           class="card-img-top product-image">
+    } @else {
+      <!-- Imagen por defecto si no tiene fotos -->
+      <div class="d-flex flex-column justify-content-center align-items-center h-100 text-muted p-5">
+        <i class="bi bi-image fs-1 mb-2"></i>
+        <span>Sin imágenes</span>
+      </div>
+    }
+    
+    <!-- Hover overlay en la imagen -->
+    <div class="card-img-overlay-hover d-flex justify-content-center align-items-center">
+      <a [routerLink]="['/anuncio', item().id]" class="btn btn-light fw-bold shadow-sm px-4 py-2 rounded-pill">
+        Ver Detalle
+      </a>
+    </div>
+
+    <!-- Badge de Estado de Conservación en la esquina (z-index 3 para quedar sobre el overlay) -->
+    <div class="position-absolute top-0 start-0 m-3" style="z-index: 3;">
+      <span class="badge px-3 py-2 rounded-pill font-monospace fw-semibold" 
+            [ngClass]="getConditionClass(item().item_condition)">
+        {{ getConditionLabel(item().item_condition) }}
+      </span>
+    </div>
+
+    <!-- Botón de Like (Corazón) en la esquina superior derecha (z-index 10 para quedar sobre el overlay y ser clickable) -->
+    <div class="position-absolute top-0 end-0 m-3" style="z-index: 10;">
+      <button (click)="toggleFavorite($event)" 
+              class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center fav-btn" 
+              [class.text-danger]="isFavorite()"
+              style="width: 36px; height: 36px; border: none; cursor: pointer;">
+        <i class="bi" [ngClass]="isFavorite() ? 'bi-heart-fill' : 'bi-heart'"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Cuerpo de la Tarjeta -->
+  <div class="card-body d-flex flex-column p-4">
+    <!-- Categoría y Fecha -->
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <span class="text-uppercase font-monospace text-primary fw-bold tracking-wider small">
+        {{ item().category_name || 'Otros' }}
+      </span>
+      <span class="text-muted small">
+        {{ item().created_at | date:'dd/MM/yyyy' }}
+      </span>
+    </div>
+
+    <!-- Título y Precio -->
+    <h5 class="card-title text-dark fw-bold text-truncate mb-2" [title]="item().title">
+      {{ item().title }}
+    </h5>
+    
+    <div class="mt-auto pt-3 border-top border-light-subtle d-flex justify-content-between align-items-end">
+      <div>
+        <div class="text-muted small mb-0.5">Precio</div>
+        <span class="fs-4 fw-extrabold text-success font-monospace">
+          {{ item().price | currency:'EUR':'symbol':'1.2-2':'es-ES' }}
+        </span>
+      </div>
+      
+      <!-- Ubicación -->
+      @if (item().location) {
+        <div class="text-muted small d-flex align-items-center">
+          <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+          <span>{{ item().location }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</div>
