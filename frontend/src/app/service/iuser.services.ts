@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, isDevMode } from '@angular/core';
 import { IUser, IUserListResponse } from '../interface/iuser.interface';
 import { lastValueFrom } from 'rxjs';
 
@@ -8,7 +8,16 @@ import { lastValueFrom } from 'rxjs';
 })
 export class IUserServices {
   private httpClient = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000/api/auth/register';
+
+  private isProduction(): boolean {
+    return !isDevMode() && typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+  }
+
+  private get baseUrl(): string {
+    return this.isProduction()
+      ? 'https://unir-proyecto-final-backend-production.up.railway.app/api/auth/register'
+      : 'http://localhost:3000/api/auth/register';
+  }
 
   getAllPromises(url: string= ''): Promise<IUserListResponse> {
     const miUrl = (url === "") ? this.baseUrl : url;

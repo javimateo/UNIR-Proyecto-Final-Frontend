@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 import { AuthResponse, LoginCredentials } from '../interface/auth-response.interface';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { tap } from 'rxjs';
@@ -7,7 +7,15 @@ import { tap } from 'rxjs';
   providedIn: 'root',
 })
 export class AuthServiceServices {
-  private apiUrl = 'http://localhost:3000/api/auth'
+  private isProduction(): boolean {
+    return !isDevMode() && typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+  }
+
+  private get apiUrl(): string {
+    return this.isProduction()
+      ? 'https://unir-proyecto-final-backend-production.up.railway.app/api/auth'
+      : 'http://localhost:3000/api/auth';
+  }
 
 constructor (private http: HttpClient){}
 
