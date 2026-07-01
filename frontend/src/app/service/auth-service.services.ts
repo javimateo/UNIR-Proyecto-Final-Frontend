@@ -12,7 +12,7 @@ export class AuthServiceServices {
 constructor (private http: HttpClient){}
 
 login(credentials: LoginCredentials) {
-    // Aquí le añadimos el /login al final
+    
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
         localStorage.setItem('token', response.token);

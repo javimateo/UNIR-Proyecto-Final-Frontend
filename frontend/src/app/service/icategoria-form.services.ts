@@ -56,9 +56,14 @@ export class ICategoriaFormServices {
 
   async delete(id: number): Promise<ICategoriaForm> {
     try {
+      const token = localStorage.getItem('token');
+      
+      const headers = { Authorization: `Bearer ${token}` };
       
       return await lastValueFrom(
-        this.httpClient.delete<ICategoriaForm>(`${this.baseUrl}/categories/${id}`),
+        this.httpClient.delete<ICategoriaForm>(`${this.baseUrl}/categories/${id}`, {
+          headers,
+        }),
       );
     } catch (error) {
       throw error;

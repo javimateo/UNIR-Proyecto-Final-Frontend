@@ -84,9 +84,9 @@ private categoriaService = inject(ICategoriaFormServices);
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          // Ejecutamos el delete asíncrono
+          
           await this.categoriaService.delete(id);
-          await this.obtenerCategorias(); // Refrescamos la tabla
+          await this.obtenerCategorias(); 
           
           Swal.fire('¡Eliminada!', 'La categoría ha sido borrada.', 'success');
         } catch (error) {

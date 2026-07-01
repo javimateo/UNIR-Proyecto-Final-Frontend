@@ -4,7 +4,7 @@ html, body {
   margin: 0;
 }
 
-/* Le damos el alto total al componente principal de Angular */
+
 app-root {
   display: flex;
   flex-direction: column;

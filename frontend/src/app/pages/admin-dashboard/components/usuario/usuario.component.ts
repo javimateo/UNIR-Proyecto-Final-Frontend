@@ -1,246 +1,126 @@
-import { Component, inject, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, signal } from '@angular/core';
 import { IUserServices } from '../../../../service/iuser.services';
-import { IUser, IUserEditForm } from '../../../../interface/iuser.interface';
+import { IUser } from '../../../../interface/iuser.interface';
 import { NgClass } from '@angular/common';
 import Swal from 'sweetalert2';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { email } from '@angular/forms/signals';
 
 @Component({
   selector: 'app-usuario',
-  imports: [NgClass,ReactiveFormsModule],
+  imports: [NgClass, ReactiveFormsModule],
   templateUrl: './usuario.component.html',
   styleUrl: './usuario.component.css',
 })
 export class UsuarioComponent {
   arrayUsersPromises = signal<IUser[]>([]);
-
   private userService = inject(IUserServices);
-  private todosLosUsuariosFake: IUser[] = [
-    {
-      id: 1,
-      username: 'admin',
-      apellido: 'Pérez',
-      role: 'admin',
-      email: 'admin@mail.com',
-      status: 'Activo',
-      password: '',
-    },
-    {
-      id: 2,
-      username: 'user1',
-      apellido: 'García',
-      role: 'moderator',
-      email: 'javi@mail.com',
-      status: 'Activo',
-      password: '',
-    },
-    {
-      id: 3,
-      username: 'user3',
-      apellido: 'López',
-      role: 'user',
-      email: 'user3@mail.com',
-      status: 'Activo',
-      password: '',
-    },
-    {
-      id: 4,
-      username: 'user4',
-      apellido: 'Martínez',
-      role: 'user',
-      email: 'user4@mail.com',
-      status: 'Activo',
-      password: '',
-    },
-    {
-      id: 5,
-      username: 'user5',
-      apellido: 'Rodríguez',
-      role: 'user',
-      email: 'user5@mail.com',
-      status: 'Bloqueado',
-      password: '',
-    },
-    {
-      id: 6,
-      username: 'user6',
-      apellido: 'Sánchez',
-      role: 'user',
-      email: 'user6@mail.com',
-      status: 'Activo',
-      password: '',
-    },
-    {
-      id: 7,
-      username: 'user7',
-      apellido: 'Gómez',
-      role: 'user',
-      email: 'user7@mail.com',
-      status: 'Activo',
-      password: '',
-    },
-    {
-      id: 8,
-      username: 'user8',
-      apellido: 'Fernández',
-      role: 'user',
-      email: 'user8@mail.com',
-      status: 'Bloqueado',
-      password: '',
-    },
-    {
-      id: 9,
-      username: 'user9',
-      apellido: 'Díaz',
-      role: 'user',
-      email: 'user9@mail.com',
-      status: 'Activo',
-      password: '',
-    },
-    {
-      id: 11,
-      username: 'user10',
-      apellido: 'Álvarez',
-      role: 'user',
-      email: 'user10@mail.com',
-      status: 'Activo',
-      password: '',
-    },
-    {
-      id: 12,
-      username: 'user11',
-      apellido: 'Torres',
-      role: 'user',
-      email: 'user11@mail.com',
-      status: 'Bloqueado',
-      password: '',
-    },
-    {
-      id: 13,
-      username: 'user12',
-      apellido: 'Ruiz',
-      role: 'user',
-      email: 'user12@mail.com',
-      status: 'Activo',
-      password: '',
-    },
-  ];
 
   listaUsuariosMostrar: IUser[] = [];
-  paginaActual: number = 1;
-  limitePorPagina: number = 4;
-  totalUsuarios: number = 0;
-
-  miFormularioEdicion! :FormGroup
-  usuariosSeleccionadosId: number|null=null
-
+  miFormularioEdicion!: FormGroup;
+  usuariosSeleccionadosId: number | null = null;
+  private cdr = inject(ChangeDetectorRef);
   ngOnInit() {
     this.cargarUsuarios();
-    this.totalUsuarios = this.todosLosUsuariosFake.length;
-    this.cargarUsuariosSimulados();
-    this.initFormulario()
+    this.initFormulario();
   }
 
-
-  initFormulario(){
+  initFormulario() {
     this.miFormularioEdicion = new FormGroup({
-      username: new FormControl('',[Validators.required,Validators.minLength(3)]),
-      apellido: new FormControl('',[Validators.required,Validators.minLength(3)]),
-      email: new FormControl('',[Validators.required,Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]),
-      status: new FormControl('',[Validators.required]),
-      role: new FormControl('',[Validators.required])
-
-
-    })
+      username: new FormControl('', [Validators.required, Validators.minLength(3)]),
+      email: new FormControl('', [
+        Validators.required,
+        Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
+      ]),
+      role: new FormControl('', [Validators.required]),
+    });
   }
 
-  cargarUsuariosSimulados() {
-    const inicio = (this.paginaActual - 1) * this.limitePorPagina;
-    const fin = inicio + this.limitePorPagina;
-    this.listaUsuariosMostrar = this.todosLosUsuariosFake.slice(inicio, fin);
-  }
-
-  siguientePagina() {
-    if (this.paginaActual * this.limitePorPagina < this.totalUsuarios) {
-      this.paginaActual++;
-      this.cargarUsuariosSimulados();
-    }
-  }
-
-  anteriorPagina() {
-    if (this.paginaActual > 1) {
-      this.paginaActual--;
-      this.cargarUsuariosSimulados();
-    }
-  }
-
-  async cargarUsuarios(url: string = '') {
+  async cargarUsuarios() {
     try {
-      const response = await this.userService.getAllPromises(url);
-      this.arrayUsersPromises.set(response.results);
-    } catch (error) {}
+      this.listaUsuariosMostrar = await this.userService.getAllPromises();
+      this.cdr.detectChanges(); 
+      
+    } catch (error) {
+      console.error('Error al cargar la lista:', error);
+    }
   }
-  cambiarEstado(usuarioId: number) {
-    const user = this.todosLosUsuariosFake.find((u) => u.id === usuarioId);
 
-    if (user) {
-      user.status = user.status === 'Activo' ? 'Bloqueado' : 'Activo';
-      this.cargarUsuariosSimulados();
+  async cambiarEstado(usuario: IUser) {
+    try {
+      const nuevoEstado = usuario.status === 'active' ? 'blocked' : 'active';
+      // Pasamos los datos obligatorios para cumplir con IUserEditForm
+      const datosActualizados = {
+        username: usuario.username,
+        apellido: usuario.apellido || '',
+        email: usuario.email,
+        role: usuario.role,
+        status: nuevoEstado
+      };
+
+      await this.userService.updateUser(usuario.id, datosActualizados as any);
+      await this.cargarUsuarios();
 
       Swal.fire({
         toast: true,
         position: 'top-end',
-        icon: user.status === 'Activo' ? 'success' : 'info',
-        title: `Usuario ${user.username} ${user.status === 'Activo' ? 'desbloqueado' : 'bloqueado'}`,
+        icon: 'success',
+        title: `Usuario modificado a ${nuevoEstado} con éxito`,
         showConfirmButton: false,
         timer: 2500,
         timerProgressBar: true,
       });
+    } catch (error) {
+      console.error('Error al cambiar estado:', error);
+      Swal.fire('Error', 'No se pudo cambiar el estado', 'error');
     }
   }
 
-seleccionarUsuarioParaEditar(usuario: any) {
+  seleccionarUsuarioParaEditar(usuario: IUser) {
     this.usuariosSeleccionadosId = usuario.id;
-    
-    // El .patchValue() funciona EXACTAMENTE igual
     this.miFormularioEdicion.patchValue({
       username: usuario.username,
       apellido: usuario.apellido,
       email: usuario.email,
-      role: usuario.role
+      role: usuario.role,
     });
   }
 
-  guardarCambiosUsuario() {
+  async guardarCambiosUsuario() {
     if (this.miFormularioEdicion.invalid) {
       this.miFormularioEdicion.markAllAsTouched();
       return;
     }
 
-    const datosEditados = this.miFormularioEdicion.value as IUserEditForm;
+    if (this.usuariosSeleccionadosId !== null) {
+      try {
+        const datosEditados = this.miFormularioEdicion.value;
+        console.log('Datos enviados a updateUser:', datosEditados);
 
-    const index = this.todosLosUsuariosFake.findIndex(u => u.id === this.usuariosSeleccionadosId);
-    if (index !== -1) {
-      this.todosLosUsuariosFake[index] = {
-        ...this.todosLosUsuariosFake[index],
-        username: datosEditados.username,
-        apellido: datosEditados.apellido,
-        email: datosEditados.email,
-        role: datosEditados.role
-      };
+        // 1. Actualiza campos generales (username, email, apellido)
+        await this.userService.updateUser(this.usuariosSeleccionadosId, datosEditados);
 
-      this.usuariosSeleccionadosId = null;
-      this.miFormularioEdicion.reset();
-      this.cargarUsuariosSimulados();
+        // 2. ¡LLAMADA CLAVE! Forzamos la actualización del Rol con su método exclusivo
+        console.log(`Enviando nuevo rol '${datosEditados.role}' al endpoint de roles...`);
+        await this.userService.updateRole(this.usuariosSeleccionadosId, datosEditados.role);
 
-      Swal.fire({
-        icon: 'success',
-        title: '¡Usuario Actualizado!',
-        text: 'Los datos se modificaron correctamente.',
-        timer: 2000,
-        showConfirmButton: false
-      });
+        // Limpieza del formulario
+        this.usuariosSeleccionadosId = null;
+        this.miFormularioEdicion.reset();
+
+        // Recargamos la tabla para ver los cambios reflejados
+        await this.cargarUsuarios();
+
+        Swal.fire({
+          icon: 'success',
+          title: '¡Usuario Actualizado!',
+          text: 'Los datos y el rol se guardaron con éxito.',
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      } catch (error) {
+        console.error('Error al actualizar el usuario/rol:', error);
+        Swal.fire('Error', 'Hubo un problema al guardar el rol en el servidor.', 'error');
+      }
     }
   }
 
@@ -248,37 +128,34 @@ seleccionarUsuarioParaEditar(usuario: any) {
     this.usuariosSeleccionadosId = null;
     this.miFormularioEdicion.reset();
   }
-  
 
   eliminarUser(usuarioId: number) {
     Swal.fire({
       title: '¿Estás seguro?',
-      text: 'Esta acción eliminará al usuario de la lista visual.',
+      text: 'Esta acción eliminará al usuario.',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
       cancelButtonColor: '#3085d6',
       confirmButtonText: 'Sí, eliminar',
       cancelButtonText: 'Cancelar',
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        this.todosLosUsuariosFake = this.todosLosUsuariosFake.filter((u) => u.id !== usuarioId);
-        this.totalUsuarios = this.todosLosUsuariosFake.length;
+        try {
+          await this.userService.deleteById(usuarioId);
+          await this.cargarUsuarios();
 
-        const maxPaginas = Math.ceil(this.totalUsuarios / this.limitePorPagina);
-        if (this.paginaActual > maxPaginas && this.paginaActual > 1) {
-          this.paginaActual = maxPaginas;
+          Swal.fire({
+            title: '¡Eliminado!',
+            text: 'El usuario ha sido borrado.',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false,
+          });
+        } catch (error) {
+          console.error('Error al eliminar:', error);
+          Swal.fire('Error', 'No se pudo eliminar al usuario.', 'error');
         }
-
-        this.cargarUsuariosSimulados();
-
-        Swal.fire({
-          title: '¡Eliminado!',
-          text: 'El usuario ha sido removido con éxito.',
-          icon: 'success',
-          timer: 2000,
-          showConfirmButton: false,
-        });
       }
     });
   }
