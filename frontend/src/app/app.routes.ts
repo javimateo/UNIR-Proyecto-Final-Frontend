@@ -15,16 +15,18 @@ import { ModDashboardComponent } from './pages/mod-dashboard/mod-dashboard.compo
 import { UserDashboardComponent } from './pages/user-dashboard/user-dashboard.component';
 import { adminGuard } from './guards/admin-guard';
 import { moderadorGuard } from './guards/moderador-guard';
+import { guestGuard } from './guards/guest.guard';
+import { authGuard } from './guards/auth.guard';
 
 
 export const routes: Routes = [  
     {path:"", pathMatch:"full", redirectTo:"login"},
-    {path:"login", component:LoginComponent},
-    {path:"home", component:HomeComponent},
-    {path:"anuncio/nuevo", component:ItemFormComponent},
-    {path:"anuncio/editar/:id", component:ItemFormComponent},
-    {path:"anuncio/:id", component:ItemDetailComponent},
-    {path:"dashboard", component:UserDashboardComponent},
+    {path:"login", component:LoginComponent, canActivate:[guestGuard]},
+    {path:"home", component:HomeComponent, canActivate:[authGuard]},
+    {path:"anuncio/nuevo", component:ItemFormComponent, canActivate:[authGuard]},
+    {path:"anuncio/editar/:id", component:ItemFormComponent, canActivate:[authGuard]},
+    {path:"anuncio/:id", component:ItemDetailComponent, canActivate:[authGuard]},
+    {path:"dashboard", component:UserDashboardComponent, canActivate:[authGuard]},
     {path:"admin-dashboard", component:AdminDashboardComponent, canActivate:[adminGuard]},
     {path:"mod-dashboard", component:ModDashboardComponent, canActivate:[moderadorGuard]},
   {path:"moderator",component:ModeratorHomeComponent},

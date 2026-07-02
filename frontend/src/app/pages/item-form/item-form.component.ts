@@ -49,14 +49,13 @@ export class ItemFormComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    // Verificar si el usuario está autenticado. Si no, redirigir a Login
+    this.initForm();
+
     if (!this.authService.isLoggedIn()) {
       Swal.fire('Acceso denegado', 'Debes iniciar sesión para publicar o editar artículos.', 'warning');
       this.router.navigate(['/login']);
       return;
     }
-
-    this.initForm();
     
     // Comprobar si hay un ID en la ruta (Edición)
     const idParam = this.route.snapshot.paramMap.get('id');

@@ -1,23 +1,84 @@
-input.ng-invalid.ng-touched{
-    border-bottom: 3px solid tomato;
-
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 65% 35%, #0d3d28 0%, #0b1e35 55%, #060e1a 100%);
+  padding: 2rem 1rem;
+  gap: 1.5rem;
 }
 
-.error{
-    font-size: 10px;
-    color: tomato;
-    margin: 0;
-
+/* Logo */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.btn.disabled, .btn:disabled, fieldset:disabled .btn {
-    color: blue;
-    pointer-events: none;
-    background-color: grey;
-    border-color: var(--bs-btn-disabled-border-color);
-    opacity: var(--bs-btn-disabled-opacity);
+.brand-icon {
+  background: #1a5c38;
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.1rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 1px;
 }
 
-img{
-    width: 150px;
+.brand-name {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.brand-market {
+  color: #4db88c;
+}
+
+/* Card */
+.login-card {
+  background: #fff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 460px;
+  overflow: hidden;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 0.9rem 0;
+  margin-bottom: -2px;
+  font-weight: 600;
+  color: #6c757d;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.tab-btn.active {
+  color: #1a5c38;
+  border-bottom-color: #1a5c38;
+}
+
+.tab-btn:hover:not(.active) {
+  color: #333;
+}
+
+/* Form area */
+.form-area {
+  padding: 1.5rem 2rem 2rem;
 }

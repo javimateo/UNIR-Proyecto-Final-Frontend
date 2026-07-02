@@ -2,13 +2,13 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../service/auth.service';
 
-export const moderadorGuard: CanActivateFn = (route, state) => {
+export const authGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
-  if (authService.getRole() === 'moderator') {
+
+  if (authService.isLoggedIn()) {
     return true;
-  } else {
-    router.navigate(['/home']);
-    return false;
   }
+  router.navigate(['/login']);
+  return false;
 };
