@@ -1,49 +1,60 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { tap, firstValueFrom } from 'rxjs';
 import { IUser } from '../interface/iuser.interface';
+import { AuthResponse, LoginCredentials } from '../interface/auth-response.interface';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  // Signal para almacenar el usuario actual logueado
+  private http = inject(HttpClient);
+  private apiUrl = 'http://localhost:3000/api/auth';
+
   private currentUserSignal = signal<Partial<IUser> | null>(null);
 
-  // Selector computado expuesto públicamente
   currentUser = computed(() => this.currentUserSignal());
   isLoggedIn = computed(() => this.currentUserSignal() !== null);
 
   constructor() {
-    // Intentar recuperar sesión existente al iniciar
     const savedUser = localStorage.getItem('user_session');
     if (savedUser) {
       try {
         this.currentUserSignal.set(JSON.parse(savedUser));
-      } catch (e) {
+      } catch {
         localStorage.removeItem('user_session');
       }
     }
   }
 
-  // Simular login
-  login(email: string): void {
-    const user: Partial<IUser> = {
-      id: 1,
-      username: 'Jonathan',
-      apellido: 'Mateo',
-      email: email,
-      role: 'user' // 'user' | 'moderator' | 'admin'
-    };
+  login(credentials: LoginCredentials) {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
+      tap(response => {
+        localStorage.setItem('token', response.token);
+      })
+    );
+  }
+
+  async fetchProfile(): Promise<void> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    const user = await firstValueFrom(this.http.get<Partial<IUser>>(`${this.apiUrl}/me`, { headers }));
     localStorage.setItem('user_session', JSON.stringify(user));
+    localStorage.setItem('role', user.role ?? 'user');
     this.currentUserSignal.set(user);
   }
 
-  // Simular logout
+  getRole(): string | null {
+    return localStorage.getItem('role');
+  }
+
   logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
     localStorage.removeItem('user_session');
     this.currentUserSignal.set(null);
   }
 
-  // Establecer usuario logueado tras registro
   setCurrentUser(user: Partial<IUser>): void {
     localStorage.setItem('user_session', JSON.stringify(user));
     this.currentUserSignal.set(user);

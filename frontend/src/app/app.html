@@ -51,14 +51,17 @@
   </header>
 }
 
-<main class="container my-5 pb-5">
+@if (authService.isLoggedIn()) {
+  <main class="container my-5 pb-5">
+    <router-outlet />
+  </main>
+  <footer class="bg-dark border-top border-secondary-subtle text-muted text-center py-4 mt-auto">
+    <div class="container">
+      <p class="mb-1 text-light-emphasis small">&copy; 2026 ReMarket UNIR. Proyecto Final de Carrera.</p>
+      <small class="text-muted">Desarrollado con Angular, Node.js y MySQL</small>
+    </div>
+  </footer>
+} @else {
   <router-outlet />
-</main>
-
-<footer class="bg-dark border-top border-secondary-subtle text-muted text-center py-4 mt-auto">
-  <div class="container">
-    <p class="mb-1 text-light-emphasis small">&copy; 2026 ReMarket UNIR. Proyecto Final de Carrera.</p>
-    <small class="text-muted">Desarrollado con Angular, Node.js y MySQL</small>
-  </div>
-</footer>
+}
 
