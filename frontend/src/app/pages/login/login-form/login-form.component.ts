@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthServiceServices } from '../../../service/auth-service.services';
+import { AuthService } from '../../../service/auth.service';
 import { firstValueFrom } from 'rxjs';
 
 @Component({
@@ -13,18 +13,15 @@ import { firstValueFrom } from 'rxjs';
 })
 export class LoginFormComponent {
   private router = inject(Router);
-  private authService = inject(AuthServiceServices);
-  loginForm: FormGroup;
+  private authService = inject(AuthService);
 
-  constructor() {
-    this.loginForm = new FormGroup({
-      email: new FormControl('', [
-        Validators.required,
-        Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
-      ]),
-      password: new FormControl('', [Validators.required, Validators.minLength(8)]),
-    });
-  }
+  loginForm = new FormGroup({
+    email: new FormControl('', [
+      Validators.required,
+      Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
+    ]),
+    password: new FormControl('', [Validators.required, Validators.minLength(8)]),
+  });
 
   checkControl(controlName: string, errorName: string): boolean | undefined {
     return (
@@ -36,15 +33,11 @@ export class LoginFormComponent {
   async getDataForm() {
     if (this.loginForm.valid) {
       try {
-        const response = await firstValueFrom(this.authService.login(this.loginForm.value));
-        console.log('Datos de login enviados:', this.loginForm.value);
-
-        await firstValueFrom(this.authService.getProfile());
+        await firstValueFrom(this.authService.login(this.loginForm.value as any));
+        await this.authService.fetchProfile();
 
         const role = this.authService.getRole();
-        
-
-        if (role == 'admin') {
+        if (role === 'admin') {
           this.router.navigate(['/admin-dashboard']);
         } else if (role === 'moderator') {
           this.router.navigate(['/mod-dashboard']);
