@@ -11,8 +11,9 @@ import { AuthService } from './service/auth.service';
 })
 export class App {
   protected readonly title = signal('TFM_UNIR');
-  public authService = inject(AuthService);
+  protected authService = inject(AuthService);
   private router = inject(Router);
+  
 
   logout(): void {
     this.authService.logout();

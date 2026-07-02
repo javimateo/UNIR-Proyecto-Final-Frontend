@@ -4,8 +4,16 @@ export interface IUser {
   apellido: string;
   email: string;
   password: string;
+  status: string
   role?: string;        
-  createdAt?: Date;
+  avatar_url: string;
+}
+
+export interface IUserEditForm{
+  username: string,
+  apellido: string,
+  email:string,
+  role: string
 }
 
 export interface IUserListResponse {
@@ -14,4 +22,39 @@ export interface IUserListResponse {
   total: number;
   total_pages: number;
   results: IUser[];
+}
+
+export interface IStatsUsers {
+  active: number;
+  blocked: number;
+  deleted: number;
+  total: number;
+}
+
+export interface IStatsItems {
+  published: number;
+  draft: number;
+  under_review: number;
+  sold: number;
+  removed: number;
+  total: number;
+}
+
+export interface IStatsReports {
+  pending: number;
+  resolved_active: number;
+  resolved_removed: number;
+  total: number;
+}
+
+export interface IStatsRecent {
+  published_last_30d: number;
+}
+
+
+export interface IGlobalStatsPayload {
+  users: IStatsUsers;
+  items: IStatsItems;
+  reports: IStatsReports;
+  recent: IStatsRecent;
 }
