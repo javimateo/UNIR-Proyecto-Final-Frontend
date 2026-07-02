@@ -27,9 +27,8 @@ export class UsuarioComponent {
   initFormulario() {
     this.miFormularioEdicion = new FormGroup({
       username: new FormControl('', [Validators.required, Validators.minLength(3)]),
-      email: new FormControl('', [
-        Validators.required,
-        Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/),
+      avatar_url: new FormControl('', [
+        Validators.pattern(/^(https?:\/\/)?([a-zA-Z0-9\-._~:/?#[\]@!$&'()*+,;=]+)$/),
       ]),
       role: new FormControl('', [Validators.required]),
     });
@@ -80,8 +79,7 @@ export class UsuarioComponent {
     this.usuariosSeleccionadosId = usuario.id;
     this.miFormularioEdicion.patchValue({
       username: usuario.username,
-      apellido: usuario.apellido,
-      email: usuario.email,
+      avatar_url: usuario.avatar_url || '',
       role: usuario.role,
     });
   }
@@ -94,33 +92,41 @@ export class UsuarioComponent {
 
     if (this.usuariosSeleccionadosId !== null) {
       try {
+        // 1. Obtenemos los datos del formulario (username, avatar_url, role)
         const datosEditados = this.miFormularioEdicion.value;
-        console.log('Datos enviados a updateUser:', datosEditados);
-
         
-        await this.userService.updateUser(this.usuariosSeleccionadosId, datosEditados);
+        // 2. Buscamos al usuario original en nuestra lista para rescatar su email intacto
+        const usuarioOriginal = this.listaUsuariosMostrar.find(u => u.id === this.usuariosSeleccionadosId);
 
+        // 3. Creamos el paquete final juntando lo del formulario y el email obligatorio
+        const datosParaEnviar = {
+          ...datosEditados,          // Esparce username, avatar_url y role
+          email: usuarioOriginal?.email // Añade el email original que exige el backend
+        };
+
+        console.log('Datos enviados a updateUser con email incluido:', datosParaEnviar);
+
+        // 4. Enviamos el nuevo objeto "datosParaEnviar" al servidor
+        await this.userService.updateUser(this.usuariosSeleccionadosId, datosParaEnviar as any);
         
-        console.log(`Enviando nuevo rol '${datosEditados.role}' al endpoint de roles...`);
+        // Actualizamos el rol (esto se queda igual)
         await this.userService.updateRole(this.usuariosSeleccionadosId, datosEditados.role);
-
-        
-        this.usuariosSeleccionadosId = null;
-        this.miFormularioEdicion.reset();
-
-        
-        await this.cargarUsuarios();
 
         Swal.fire({
           icon: 'success',
           title: '¡Usuario Actualizado!',
-          text: 'Los datos y el rol se guardaron con éxito.',
+          text: 'Los cambios se guardaron con éxito.',
           timer: 2000,
           showConfirmButton: false,
         });
+
       } catch (error) {
-        console.error('Error al actualizar el usuario/rol:', error);
-        Swal.fire('Error', 'Hubo un problema al guardar el rol en el servidor.', 'error');
+        console.error('Error al actualizar:', error);
+        Swal.fire('Error', 'Hubo un problema al guardar los datos.', 'error');
+      } finally {
+        this.usuariosSeleccionadosId = null;
+        this.miFormularioEdicion.reset();
+        await this.cargarUsuarios(); // Esto refrescará la tabla y pintará la foto
       }
     }
   }

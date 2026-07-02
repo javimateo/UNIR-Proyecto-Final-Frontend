@@ -6,7 +6,7 @@ export interface IUser {
   password: string;
   status: string
   role?: string;        
-  createdAt?: Date;
+  avatar_url: string;
 }
 
 export interface IUserEditForm{
