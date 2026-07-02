@@ -23,3 +23,38 @@ export interface IUserListResponse {
   total_pages: number;
   results: IUser[];
 }
+
+export interface IStatsUsers {
+  active: number;
+  blocked: number;
+  deleted: number;
+  total: number;
+}
+
+export interface IStatsItems {
+  published: number;
+  draft: number;
+  under_review: number;
+  sold: number;
+  removed: number;
+  total: number;
+}
+
+export interface IStatsReports {
+  pending: number;
+  resolved_active: number;
+  resolved_removed: number;
+  total: number;
+}
+
+export interface IStatsRecent {
+  published_last_30d: number;
+}
+
+
+export interface IGlobalStatsPayload {
+  users: IStatsUsers;
+  items: IStatsItems;
+  reports: IStatsReports;
+  recent: IStatsRecent;
+}

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { IUser, IUserEditForm, IUserListResponse } from '../interface/iuser.interface';
+import { IGlobalStatsPayload, IUser, IUserEditForm, IUserListResponse } from '../interface/iuser.interface';
 import { lastValueFrom } from 'rxjs';
 
 @Injectable({
@@ -9,8 +9,7 @@ import { lastValueFrom } from 'rxjs';
 export class IUserServices {
   private httpClient = inject(HttpClient);
   private baseUrl = 'http://localhost:3000/api';
-
-  
+  cacheEstadisticas: IGlobalStatsPayload | null = null;
   getAllPromises(): Promise<IUser[]> {
     const token = localStorage.getItem('token');
     const headers = { 'Authorization': `Bearer ${token}` };
@@ -58,4 +57,23 @@ export class IUserServices {
     const body = { status: nuevoEstado };
     return await lastValueFrom(this.httpClient.patch<IUser>(`${this.baseUrl}/users/${usuarioId}/status`, body, { headers }));
   }
+  async getGlobalStats(): Promise<IGlobalStatsPayload> {
+  const token = localStorage.getItem('token'); 
+  const opciones = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    }
+  };
+  const response = await fetch('http://localhost:3000/api/admin/stats', opciones); 
+  
+  if (!response.ok) {
+    throw new Error(`Error de conexión: ${response.status} - No autorizado`);
+  }
+  const datos: IGlobalStatsPayload = await response.json();
+  this.cacheEstadisticas = datos; 
+  
+  return datos;
+}
 }
