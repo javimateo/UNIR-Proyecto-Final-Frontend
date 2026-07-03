@@ -82,11 +82,13 @@
             <h2 class="display-6 fw-black text-success font-monospace mb-0">
               {{ item.price | currency:'EUR':'symbol':'1.2-2':'es-ES' }}
             </h2>
-            <button (click)="toggleFavorite()" 
+            <button (click)="toggleFavorite()"
                     class="btn rounded-circle p-0 d-flex align-items-center justify-content-center border-0 bg-light-subtle shadow-sm hover-scale"
                     style="width: 42px; height: 42px; cursor: pointer; transition: transform 0.2s;"
                     [class.text-danger]="isFavorite()"
                     [class.text-secondary]="!isFavorite()"
+                    [attr.aria-pressed]="isFavorite()"
+                    [attr.aria-label]="isFavorite() ? 'Quitar de favoritos' : 'Añadir a favoritos'"
                     [title]="isFavorite() ? 'Quitar de favoritos' : 'Añadir a favoritos'">
               <i class="bi fs-4" [ngClass]="isFavorite() ? 'bi-heart-fill' : 'bi-heart'"></i>
             </button>
