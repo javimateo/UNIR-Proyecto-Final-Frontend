@@ -12,7 +12,7 @@ import Swal from 'sweetalert2';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './item-form.component.html',
-  styleUrls: ['./item-form.component.css']
+  styleUrls: ['./item-form.component.css'],
 })
 export class ItemFormComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -25,38 +25,25 @@ export class ItemFormComponent implements OnInit {
   isEditMode: boolean = false;
   itemId: number | null = null;
   isLoading: boolean = false;
+  categories: { id: number; name: string }[] = [];
+  conditions: { value: string; label: string }[] = [];
 
-  // Lista local para previsualizar las fotos subidas (Base64)
   uploadedPhotos: string[] = [];
-
-  categories = [
-    { id: 1, name: 'Electrónica' },
-    { id: 2, name: 'Ropa y moda' },
-    { id: 3, name: 'Hogar' },
-    { id: 4, name: 'Deportes' },
-    { id: 5, name: 'Libros' },
-    { id: 6, name: 'Juguetes' },
-    { id: 7, name: 'Vehículos' },
-    { id: 8, name: 'Otros' }
-  ];
-
-  conditions = [
-    { value: 'new', label: 'Nuevo' },
-    { value: 'like_new', label: 'Como nuevo' },
-    { value: 'good', label: 'Buen estado' },
-    { value: 'fair', label: 'Aceptable' },
-    { value: 'poor', label: 'Gastado' }
-  ];
 
   ngOnInit(): void {
     this.initForm();
+    this.loadSelectOptions()
 
     if (!this.authService.isLoggedIn()) {
-      Swal.fire('Acceso denegado', 'Debes iniciar sesión para publicar o editar artículos.', 'warning');
+      Swal.fire(
+        'Acceso denegado',
+        'Debes iniciar sesión para publicar o editar artículos.',
+        'warning',
+      );
       this.router.navigate(['/login']);
       return;
     }
-    
+
     // Comprobar si hay un ID en la ruta (Edición)
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
@@ -74,8 +61,25 @@ export class ItemFormComponent implements OnInit {
       category_id: ['', [Validators.required]],
       item_condition: ['', [Validators.required]],
       location: ['', [Validators.required, Validators.minLength(3)]],
-      description: ['', [Validators.maxLength(1000)]]
+      description: ['', [Validators.maxLength(1000)]],
     });
+  }
+
+  
+ private async loadSelectOptions(): Promise<void> {
+    try {
+      
+      this.categories = await this.itemService.getCategories();
+      this.conditions = [
+        { value: 'new', label: 'Nuevo' },
+        { value: 'like_new', label: 'Como nuevo' },
+        { value: 'good', label: 'Buen estado' },
+        { value: 'fair', label: 'Aceptable' },
+        { value: 'poor', label: 'En mal estado' }
+      ];
+    } catch (error) {
+      console.error('Error al cargar las opciones del formulario:', error);
+    }
   }
 
   // Cargar datos previos para el modo de edición
@@ -83,8 +87,7 @@ export class ItemFormComponent implements OnInit {
     this.isLoading = true;
     try {
       const item = await this.itemService.getById(id);
-      
-      // Regla de negocio: Solo el propietario puede editar
+
       const currentUser = this.authService.currentUser();
       if (item.user_id !== currentUser?.id) {
         Swal.fire('No autorizado', 'Solo el propietario de este anuncio puede editarlo.', 'error');
@@ -92,19 +95,18 @@ export class ItemFormComponent implements OnInit {
         return;
       }
 
-      // Cargar datos en el formulario
       this.itemForm.patchValue({
         title: item.title,
         price: item.price,
         category_id: item.category_id,
         item_condition: item.item_condition,
         location: item.location,
-        description: item.description
+        description: item.description,
+        
       });
 
-      // Cargar fotos previas
-      if (item.photos) {
-        this.uploadedPhotos = [...item.photos];
+      if (item.cover_photo) {
+        this.uploadedPhotos = [item.cover_photo];
       }
     } catch (error) {
       console.error('Error al cargar datos del anuncio:', error);
@@ -115,13 +117,11 @@ export class ItemFormComponent implements OnInit {
     }
   }
 
-  // Helper para verificar errores de validación
   checkControl(controlName: string, errorName: string): boolean | undefined {
     const control = this.itemForm.get(controlName);
     return control?.hasError(errorName) && (control?.touched || control?.dirty);
   }
 
-  // Capturar archivos cargados en el input file y convertirlos a Base64 para vista previa
   onFileSelected(event: any): void {
     const files: FileList = event.target.files;
     if (files.length === 0) return;
@@ -129,12 +129,11 @@ export class ItemFormComponent implements OnInit {
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       const reader = new FileReader();
-      
+
       reader.onload = (e: any) => {
-        // Guardar el string Base64 para renderizarlo
         this.uploadedPhotos.push(e.target.result);
       };
-      
+
       reader.readAsDataURL(file);
     }
   }
@@ -144,12 +143,14 @@ export class ItemFormComponent implements OnInit {
     this.uploadedPhotos.splice(index, 1);
   }
 
-  // Enviar el formulario
   async onSubmit(): Promise<void> {
     if (this.itemForm.invalid) {
-      // Marcar todos como tocados para mostrar errores
       this.itemForm.markAllAsTouched();
-      Swal.fire('Formulario inválido', 'Por favor, rellena correctamente todos los campos obligatorios.', 'info');
+      Swal.fire(
+        'Formulario inválido',
+        'Por favor, rellena correctamente todos los campos obligatorios.',
+        'info',
+      );
       return;
     }
 
@@ -159,28 +160,26 @@ export class ItemFormComponent implements OnInit {
       ...this.itemForm.value,
       category_id: +this.itemForm.value.category_id,
       user_id: currentUser?.id,
-      photos: this.uploadedPhotos
+      photos: this.uploadedPhotos,
     };
 
     try {
       if (this.isEditMode && this.itemId) {
-        // Modo Edición
         await this.itemService.update(this.itemId, itemData);
         await Swal.fire({
           title: '¡Anuncio Guardado!',
           text: 'Los cambios se han guardado con éxito.',
           icon: 'success',
-          confirmButtonColor: '#198754'
+          confirmButtonColor: '#198754',
         });
         this.router.navigate(['/anuncio', this.itemId]);
       } else {
-        // Modo Creación
         const newItem = await this.itemService.create(itemData);
         await Swal.fire({
           title: '¡Publicado!',
           text: 'Tu anuncio ha sido publicado con éxito en ReMarket.',
           icon: 'success',
-          confirmButtonColor: '#198754'
+          confirmButtonColor: '#198754',
         });
         this.router.navigate(['/home']);
       }

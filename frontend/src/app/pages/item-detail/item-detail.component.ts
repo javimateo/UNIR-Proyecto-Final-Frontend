@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ItemService } from '../../service/item.service';
@@ -18,9 +18,10 @@ export class ItemDetailComponent implements OnInit {
   private router = inject(Router);
   private itemService = inject(ItemService);
   public authService = inject(AuthService);
+  item = signal<IItem | null>(null);
 
-  item: IItem | null = null;
-  activePhoto: string = '';
+  
+  activePhoto = '';
   isLoading: boolean = true;
 
   ngOnInit(): void {
@@ -33,25 +34,31 @@ export class ItemDetailComponent implements OnInit {
   }
 
   async loadItem(id: number): Promise<void> {
-    this.isLoading = true;
-    try {
-      this.item = await this.itemService.getById(id);
-      if (this.item.photos && this.item.photos.length > 0) {
-        this.activePhoto = this.item.photos[0];
-      }
-    } catch (error) {
-      console.error('Error al cargar el detalle del anuncio:', error);
-      Swal.fire({
-        title: 'Error',
-        text: 'No se pudo encontrar el anuncio solicitado.',
-        icon: 'error',
-        confirmButtonColor: '#dc3545',
-      });
-      this.router.navigate(['/home']);
-    } finally {
-      this.isLoading = false;
+  this.isLoading = true;
+  try {
+    // 1. Guardamos el resultado directo de la API en una constante temporal
+    const product = await this.itemService.getById(id);
+    
+    // 2. Introducimos el objeto dentro del Signal usando .set()
+    this.item.set(product);
+
+    // 3. Evaluamos la foto usando la constante temporal
+    if (product && product.cover_photo) {
+      this.activePhoto = product.cover_photo;
     }
+  } catch (error) {
+    console.error('Error al cargar el detalle del anuncio:', error);
+    Swal.fire({
+      title: 'Error',
+      text: 'No se pudo encontrar el anuncio solicitado.',
+      icon: 'error',
+      confirmButtonColor: '#dc3545',
+    });
+    this.router.navigate(['/home']);
+  } finally {
+    this.isLoading = false;
   }
+}
 
   // Cambiar la foto principal por la seleccionada en las miniaturas
   setActivePhoto(photoUrl: string): void {
@@ -67,7 +74,7 @@ export class ItemDetailComponent implements OnInit {
     }
 
     const { value: text } = await Swal.fire({
-      title: `Contactar a ${this.item?.user?.username || 'Vendedor'}`,
+      title: `Contactar a ${this.item()?.user?.username || 'Vendedor'}`,
       input: 'textarea',
       inputLabel: 'Escribe tu mensaje para iniciar el chat',
       inputPlaceholder: 'Hola, estoy interesado en tu artículo...',
@@ -117,13 +124,13 @@ export class ItemDetailComponent implements OnInit {
     });
 
     if (reason) {
-      if (this.item) {
-        // Cambiar el estado a "under_review" según la regla del enunciado:
-        // "Cuando un usuario reporta un artículo, este pasa al estado 'En revisión'"
-        this.item.status = 'under_review';
-        // Guardar cambio simulado en el servicio si existe
-        await this.itemService.update(this.item.id!, { status: 'under_review' });
-      }
+      if (this.item()) {
+  // 1. Para modificar un objeto dentro de un Signal, usamos .update() de forma inmutable
+  this.item.update(current => current ? { ...current, status: 'under_review' } : null);
+  
+  // 2. Para leer la ID y pasársela al servicio, invocamos al Signal con paréntesis ()
+  await this.itemService.update(this.item()!.id, { status: 'under_review' });
+}
 
       Swal.fire({
         title: 'Reportado con éxito',
@@ -160,27 +167,27 @@ export class ItemDetailComponent implements OnInit {
   // Verificar si el usuario actual es el dueño del anuncio
   isOwner(): boolean {
     const currentUser = this.authService.currentUser();
-    return !!currentUser && !!this.item && this.item.user_id === currentUser.id;
+    return !!currentUser && !!this.item() && this.item()!.user_id === currentUser.id;
   }
 
   // Verificar si es favorito
   isFavorite(): boolean {
-    if (!this.item) return false;
+    if (!this.item()) return false;
     const currentUser = this.authService.currentUser();
     const favKey = currentUser ? `favs_${currentUser.username}` : 'favs_guest';
     const savedFavs: number[] = JSON.parse(localStorage.getItem(favKey) || '[]');
-    return savedFavs.includes(this.item.id!);
+    return savedFavs.includes(this.item()!.id);
   }
 
   // Alternar favorito
   toggleFavorite(): void {
-    if (!this.item || !this.item.id) return;
+    if (!this.item() || !this.item()!.id) return;
     const currentUser = this.authService.currentUser();
     const favKey = currentUser ? `favs_${currentUser.username}` : 'favs_guest';
     let savedFavs: number[] = JSON.parse(localStorage.getItem(favKey) || '[]');
 
-    if (savedFavs.includes(this.item.id)) {
-      savedFavs = savedFavs.filter(favId => favId !== this.item!.id);
+    if (savedFavs.includes(this.item()!.id)) {
+      savedFavs = savedFavs.filter(favId => favId !== this.item()!.id);
       Swal.fire({
         toast: true,
         position: 'top-end',
@@ -190,7 +197,7 @@ export class ItemDetailComponent implements OnInit {
         timer: 1500
       });
     } else {
-      savedFavs.push(this.item.id);
+      savedFavs.push(this.item()!.id);
       Swal.fire({
         toast: true,
         position: 'top-end',
