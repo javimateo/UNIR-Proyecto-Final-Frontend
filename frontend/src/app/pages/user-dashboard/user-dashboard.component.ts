@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } 
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { ItemService } from '../../service/item.service';
+import { FavoritesService } from '../../service/favorites.service';
 import { IItem } from '../../interface/iitem.interface';
 import { ItemCardComponent } from '../../components/item-card/item-card.component';
 import Swal from 'sweetalert2';
@@ -35,6 +36,7 @@ export class UserDashboardComponent implements OnInit {
   authService = inject(AuthService);
   private itemService = inject(ItemService);
   private router = inject(Router);
+  private favs = inject(FavoritesService);
 
   activeTab: 'anuncios' | 'favoritos' | 'mensajes' | 'perfil' = 'anuncios';
 
@@ -114,19 +116,10 @@ export class UserDashboardComponent implements OnInit {
   // Inicializar/Cargar Favoritos desde localStorage
   async loadFavorites(): Promise<void> {
     try {
-      const currentUser = this.authService.currentUser();
-      const favKey = `favs_${currentUser?.username || 'global'}`;
-      const savedFavs: number[] = JSON.parse(localStorage.getItem(favKey) || '[]');
-      
-      // Si está vacío, por defecto simular un par para que la vista no se vea vacía e impresione
-      if (savedFavs.length === 0) {
-        const defaultFavs = [2, 4]; // Bicicleta de montaña (2) y Cafetera Express (4)
-        localStorage.setItem(favKey, JSON.stringify(defaultFavs));
-        savedFavs.push(...defaultFavs);
-      }
-
+      this.favs.seedIfEmpty([2, 4]); // ponytail: demo seed, remove when backend GET /favorites lands
+      const ids = this.favs.ids();
       const response = await this.itemService.getAll({ per_page: 50 });
-      this.favoriteItems = response.results.filter(item => item.id && savedFavs.includes(item.id));
+      this.favoriteItems = response.results.filter(item => item.id && ids.includes(item.id));
     } catch (error) {
       console.error('Error al cargar favoritos', error);
     }
@@ -134,22 +127,8 @@ export class UserDashboardComponent implements OnInit {
 
   // Quitar de favoritos
   removeFavorite(itemId: number): void {
-    const currentUser = this.authService.currentUser();
-    const favKey = `favs_${currentUser?.username || 'global'}`;
-    let savedFavs: number[] = JSON.parse(localStorage.getItem(favKey) || '[]');
-    
-    savedFavs = savedFavs.filter(id => id !== itemId);
-    localStorage.setItem(favKey, JSON.stringify(savedFavs));
+    this.favs.remove(itemId);
     this.favoriteItems = this.favoriteItems.filter(item => item.id !== itemId);
-    
-    Swal.fire({
-      toast: true,
-      position: 'top-end',
-      icon: 'success',
-      title: 'Eliminado de favoritos',
-      showConfirmButton: false,
-      timer: 1500
-    });
   }
 
   // Inicializar formulario de Perfil

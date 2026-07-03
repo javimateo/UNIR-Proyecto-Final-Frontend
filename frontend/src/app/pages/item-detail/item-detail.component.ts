@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ItemService } from '../../service/item.service';
 import { AuthService } from '../../service/auth.service';
+import { FavoritesService } from '../../service/favorites.service';
 import { IItem } from '../../interface/iitem.interface';
 import Swal from 'sweetalert2';
 
@@ -18,6 +19,7 @@ export class ItemDetailComponent implements OnInit {
   private router = inject(Router);
   private itemService = inject(ItemService);
   public authService = inject(AuthService);
+  public favs = inject(FavoritesService);
 
   item: IItem | null = null;
   activePhoto: string = '';
@@ -165,41 +167,11 @@ export class ItemDetailComponent implements OnInit {
 
   // Verificar si es favorito
   isFavorite(): boolean {
-    if (!this.item) return false;
-    const currentUser = this.authService.currentUser();
-    const favKey = currentUser ? `favs_${currentUser.username}` : 'favs_guest';
-    const savedFavs: number[] = JSON.parse(localStorage.getItem(favKey) || '[]');
-    return savedFavs.includes(this.item.id!);
+    return this.favs.isFavorite(this.item?.id);
   }
 
   // Alternar favorito
   toggleFavorite(): void {
-    if (!this.item || !this.item.id) return;
-    const currentUser = this.authService.currentUser();
-    const favKey = currentUser ? `favs_${currentUser.username}` : 'favs_guest';
-    let savedFavs: number[] = JSON.parse(localStorage.getItem(favKey) || '[]');
-
-    if (savedFavs.includes(this.item.id)) {
-      savedFavs = savedFavs.filter(favId => favId !== this.item!.id);
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: 'Eliminado de favoritos',
-        showConfirmButton: false,
-        timer: 1500
-      });
-    } else {
-      savedFavs.push(this.item.id);
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: 'Añadido a favoritos',
-        showConfirmButton: false,
-        timer: 1500
-      });
-    }
-    localStorage.setItem(favKey, JSON.stringify(savedFavs));
+    this.favs.toggle(this.item?.id);
   }
 }
