@@ -143,9 +143,13 @@ export class ItemService {
         if (filters.per_page) queryParams.push(`per_page=${filters.per_page}`);
       }
       const url = `${this.baseUrl}${queryParams.length > 0 ? '?' + queryParams.join('&') : ''}`;
-      return await lastValueFrom(
-        this.httpClient.get<any>(url).pipe(timeout(1000))
+      const data = await lastValueFrom(
+        this.httpClient.get<any>(url).pipe(timeout(8000))
       );
+      if (Array.isArray(data)) {
+        return { results: data, total: data.length, page: 1, total_pages: 1 };
+      }
+      return data;
     } catch (error) {
       if (this.isProduction()) {
         throw error;
@@ -197,7 +201,7 @@ export class ItemService {
   async getById(id: number): Promise<IItem> {
     try {
       return await lastValueFrom(
-        this.httpClient.get<IItem>(`${this.baseUrl}/${id}`).pipe(timeout(1000))
+        this.httpClient.get<IItem>(`${this.baseUrl}/${id}`).pipe(timeout(8000))
       );
     } catch (error) {
       if (this.isProduction()) {
@@ -215,7 +219,7 @@ export class ItemService {
   async create(item: IItem): Promise<IItem> {
     try {
       return await lastValueFrom(
-        this.httpClient.post<IItem>(this.baseUrl, item).pipe(timeout(1000))
+        this.httpClient.post<IItem>(this.baseUrl, item).pipe(timeout(8000))
       );
     } catch (error) {
       if (this.isProduction()) {
@@ -239,7 +243,7 @@ export class ItemService {
   async update(id: number, itemData: Partial<IItem>): Promise<IItem> {
     try {
       return await lastValueFrom(
-        this.httpClient.put<IItem>(`${this.baseUrl}/${id}`, itemData).pipe(timeout(1000))
+        this.httpClient.put<IItem>(`${this.baseUrl}/${id}`, itemData).pipe(timeout(8000))
       );
     } catch (error) {
       if (this.isProduction()) {

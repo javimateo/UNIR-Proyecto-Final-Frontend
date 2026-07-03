@@ -1,20 +1,20 @@
-@if (authService.isLoggedIn()) {
-  <header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow border-bottom border-secondary-subtle py-3">
-      <div class="container">
-        <!-- Logo -->
-        <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/home">
-          <span class="fs-3 fw-black text-white letter-spacing-tight">
-            Re<span class="text-success">Market</span>
-          </span>
-        </a>
+<header>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow border-bottom border-secondary-subtle py-3">
+    <div class="container">
+      <!-- Logo siempre visible -->
+      <a class="navbar-brand d-flex align-items-center gap-2" routerLink="/home">
+        <span class="fs-3 fw-black text-white letter-spacing-tight">
+          Re<span class="text-success">Market</span>
+        </span>
+      </a>
 
-        <!-- Botón hamburguesa para móvil -->
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      @if (authService.isLoggedIn()) {
+       
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
         </button>
 
-        <!-- Enlaces -->
+        <!-- Menú escritorio -->
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
             <li class="nav-item">
@@ -27,31 +27,25 @@
                 <i class="bi bi-plus-circle me-1"></i> Publicar Anuncio
               </a>
             </li>
-            <li class="nav-item ms-lg-2 d-lg-none">
-              <a class="nav-link px-3 py-2 rounded-pill fw-semibold text-light" routerLink="/dashboard" routerLinkActive="active bg-success text-white">
-                <i class="bi bi-person-circle me-1"></i> Mi Panel
-              </a>
-            </li>
           </ul>
 
-          <!-- Info de Usuario y Cierre de Sesión -->
           <div class="d-flex align-items-center gap-3">
             <a routerLink="/dashboard" class="text-decoration-none text-light d-none d-sm-block" style="cursor: pointer;">
               <span class="opacity-75">Hola, </span>
-              <strong class="text-success text-decoration-underline">{{ authService.currentUser()?.username }}</strong> <i class="bi bi-person-circle ms-1 text-success"></i>
+              <strong class="text-success text-decoration-underline">{{ authService.currentUser()?.username }}</strong>
             </a>
-            
             <button (click)="logout()" class="btn btn-outline-danger btn-sm px-3 py-2 rounded-pill fw-semibold shadow-sm d-flex align-items-center gap-1">
               <i class="bi bi-box-arrow-right"></i> Salir
             </button>
           </div>
         </div>
-      </div>
-    </nav>
-  </header>
-}
+      }
+    </div>
+  </nav>
+</header>
 
-<main class="container my-5 pb-5">
+
+<main class="flex-grow-1">
   <router-outlet />
 </main>
 
