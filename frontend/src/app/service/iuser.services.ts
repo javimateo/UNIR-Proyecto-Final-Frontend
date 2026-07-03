@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, isDevMode } from '@angular/core';
 import { IGlobalStatsPayload, IUser, IUserEditForm, IUserListResponse } from '../interface/iuser.interface';
 import { lastValueFrom } from 'rxjs';
 
@@ -8,7 +8,17 @@ import { lastValueFrom } from 'rxjs';
 })
 export class IUserServices {
   private httpClient = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000/api';
+
+  private isProduction(): boolean {
+    return !isDevMode() && typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+  }
+
+  private get baseUrl(): string {
+    return this.isProduction()
+      ? 'https://unir-proyecto-final-backend-production.up.railway.app/api'
+      : 'http://localhost:3000/api';
+  }
+
   cacheEstadisticas: IGlobalStatsPayload | null = null;
   getAllPromises(): Promise<IUser[]> {
     const token = localStorage.getItem('token');

@@ -9,10 +9,15 @@ import { catchError, timeout } from 'rxjs/operators';
 })
 export class ItemService {
   private httpClient = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000/api/items';
+
+  private get baseUrl(): string {
+    return this.isProduction()
+      ? 'https://unir-proyecto-final-backend-production.up.railway.app/api/items'
+      : 'http://localhost:3000/api/items';
+  }
 
   private isProduction(): boolean {
-    return !isDevMode() && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+    return !isDevMode() && typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
   }
 
   // Datos simulados (mock) para asegurar que el frontend funcione de inmediato
