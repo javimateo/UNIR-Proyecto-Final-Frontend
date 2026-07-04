@@ -28,7 +28,7 @@ export const routes: Routes = [
     {path:"anuncio/:id", component:ItemDetailComponent, canActivate:[authGuard]},
     {path:"dashboard", component:UserDashboardComponent, canActivate:[authGuard]},
     {path:"admin-dashboard", component:AdminDashboardComponent, canActivate:[adminGuard]},
-    {path:"mod-dashboard", component:ModDashboardComponent, canActivate:[moderadorGuard]},
+    {path:"mod-dashboard", component:ModeratorHomeComponent, canActivate:[moderadorGuard]},
   {path:"moderator",component:ModeratorHomeComponent},
 
   {path:"reported-products",component:ReportedProductsComponent},

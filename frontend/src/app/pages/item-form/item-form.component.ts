@@ -156,12 +156,13 @@ export class ItemFormComponent implements OnInit {
 
     this.isLoading = true;
     const currentUser = this.authService.currentUser();
-    const itemData: IItem = {
-      ...this.itemForm.value,
-      category_id: +this.itemForm.value.category_id,
-      user_id: currentUser?.id,
-      photos: this.uploadedPhotos,
-    };
+  const itemData: IItem = {
+  ...this.itemForm.value,
+  category_id: +this.itemForm.value.category_id,
+  user_id: currentUser?.id,
+  photos: this.uploadedPhotos,
+  status: 'published',
+};
 
     try {
       if (this.isEditMode && this.itemId) {

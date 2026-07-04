@@ -14,8 +14,6 @@ import { ItemCardComponent } from '../../components/item-card/item-card.componen
 })
 export class HomeComponent implements OnInit {
   private itemService = inject(ItemService);
-
-  // Signals para el estado de los datos y la carga
   items = signal<IItem[]>([]);
   isLoading = signal<boolean>(false);
   
@@ -58,21 +56,27 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  // Carga los artículos 
-  async loadItems() {
-    try {
-      const response = await this.itemService.getAllItems();
-console.log("Respuesta completa de la API:", response); // 👈 Mira esto en F12 -> Consola
-this.items.set(response);
 
-    }catch (error) {
-      throw error
-  
-
+async loadItems(page: number = 1) {
+  this.isLoading.set(true); // Si usas Signals
+  try {
+    const response = await this.itemService.getAll({ 
+      page: page, 
+      per_page: 6,
+      // ... otros filtros que tengas activos
+    }) as any;
+    
+    this.items.set(response.results); // Actualiza la lista de items
+    this.currentPage = response.page; // Actualiza la página actual
+    this.totalPages = response.total_pages; // Actualiza el total (vital para el @for de los botones)
+  } catch (error) {
+    console.error("Error al cargar:", error);
+  } finally {
+    this.isLoading.set(false);
   }
 }
 
-  // Ejecuta la búsqueda volviendo a la primera página
+  
   onSearch(): void {
     this.loadItems();
   }
@@ -88,13 +92,12 @@ this.items.set(response);
   }
 
   // Control de cambio de página con scroll arriba automático
-  changePage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.loadItems();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+ async changePage(newPage: number) {
+  if (newPage >= 1 && newPage <= this.totalPages) {
+    this.currentPage = newPage;
+    await this.loadItems(this.currentPage); // Llama a la carga con la nueva página
   }
-
+}
   // Generador de array para pintar la paginación en el HTML
   get pagesArray(): number[] {
     return Array(this.totalPages).fill(0).map((x, i) => i + 1);

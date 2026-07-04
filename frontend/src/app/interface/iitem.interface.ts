@@ -30,9 +30,4 @@ export interface IItemFilters {
   per_page?: number;
 }
 
-export interface IPagination {
-  total: number;
-  currentPage: number;
-  perPage: number;
-  totalPages: number;
-}
+

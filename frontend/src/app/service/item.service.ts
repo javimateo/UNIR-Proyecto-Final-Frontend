@@ -47,13 +47,14 @@ export class ItemService {
     if (Array.isArray(data)) {
       return { results: data, total: data.length, page: 1, total_pages: 1 };
     }
-    
+
     return data;
   }
 
-  async getAllItems(){
+  async getAllItems(url: string): Promise<IItem[]> {
+    const miUrl = (url==="") ? this.baseUrl : url;
     return await lastValueFrom(
-      this.httpClient.get<IItem[]>(`${this.baseUrl}`)
+      this.httpClient.get<IItem[]>(miUrl)
     );
   }
 
