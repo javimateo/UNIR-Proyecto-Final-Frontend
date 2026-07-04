@@ -18,38 +18,40 @@ export class ItemService {
   }
 
   
-  async getAll(filters?: {
-    search?: string;
-    category_id?: number;
-    item_condition?: string;
-    min_price?: number;
-    max_price?: number;
-    page?: number;
-    per_page?: number;
-  }): Promise<{ results: IItem[]; total: number; page: number; total_pages: number }> {
-    
-    let params = new HttpParams();
+ async getAll(filters?: { 
+  search?: string; 
+  category_id?: number; 
+  item_condition?: string; 
+  min_price?: number; 
+  max_price?: number; 
+  page?: number; 
+  per_page?: number; 
+}): Promise<{ results: IItem[]; total: number; page: number; total_pages: number }> {
 
-    if (filters) {
-      if (filters.search) params = params.set('search', filters.search);
-      if (filters.category_id) params = params.set('category_id', filters.category_id.toString());
-      if (filters.item_condition) params = params.set('item_condition', filters.item_condition);
-      if (filters.min_price !== undefined && filters.min_price !== null) params = params.set('min_price', filters.min_price.toString());
-      if (filters.max_price !== undefined && filters.max_price !== null) params = params.set('max_price', filters.max_price.toString());
-      if (filters.page) params = params.set('page', filters.page.toString());
-      if (filters.per_page) params = params.set('per_page', filters.per_page.toString());
-    }
+  let params = new HttpParams();
 
-    const data = await lastValueFrom(
-      this.httpClient.get<any>(this.baseUrl, { params })
-    );
-
-    if (Array.isArray(data)) {
-      return { results: data, total: data.length, page: 1, total_pages: 1 };
-    }
-
-    return data;
+  // Si existen filtros, los añadimos
+  if (filters) {
+    Object.keys(filters).forEach(key => {
+      const value = (filters as any)[key];
+      // Solo añadimos si el valor no es nulo/indefinido (y manejamos el 0 si aplica)
+      if (value !== undefined && value !== null && value !== '') {
+        params = params.set(key, value.toString());
+      }
+    });
   }
+
+  const data = await lastValueFrom(
+    this.httpClient.get<any>(this.baseUrl, { params })
+  );
+
+  // Manejo de respuesta (por si viene directo el array o el objeto paginado)
+  if (Array.isArray(data)) {
+    return { results: data, total: data.length, page: 1, total_pages: 1 };
+  }
+
+  return data;
+}
 
   async getAllItems(url: string): Promise<IItem[]> {
     const miUrl = (url==="") ? this.baseUrl : url;
@@ -84,6 +86,10 @@ export class ItemService {
       this.httpClient.get<{ id: number; name: string }[]>('http://localhost:3000/api/categories')
     );
   }
+  searchItems(keywords: string) {
+  // Cambiamos 'apiUrl' por 'baseUrl' para que coincida con el resto de tus métodos
+  return this.httpClient.get<any>(`${this.baseUrl}/items?search=${keywords}`);
+}
 }
   
 

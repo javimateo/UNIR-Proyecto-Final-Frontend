@@ -16,6 +16,7 @@ export class HomeComponent implements OnInit {
   private itemService = inject(ItemService);
   items = signal<IItem[]>([]);
   isLoading = signal<boolean>(false);
+  searchQuery:string = '';
   
   // Variables de control de paginación
   currentPage = 1;
@@ -23,9 +24,9 @@ export class HomeComponent implements OnInit {
   perPage = 6;
 
   // Filtros vinculados por [(ngModel)] en tu HTML
-  searchQuery = '';
-  selectedCategory = 0; // 0 = Todas
-  selectedCondition = ''; // '' = Todos
+  
+  selectedCategory : number | null = null; 
+  selectedCondition:string = ''; // '' 
   minPrice: number | null = null;
   maxPrice: number | null = null;
 
@@ -44,7 +45,9 @@ export class HomeComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     // Cargamos tanto las categorías de la BD como los anuncios iniciales
     await this.loadCategories();
-    await this.loadItems();
+    await this.loadItems(1);
+    this.itemService.getCategories().then(data => this.categories = data);
+
   }
 
   // Carga las categorías reales desde tu backend
@@ -58,17 +61,26 @@ export class HomeComponent implements OnInit {
 
 
 async loadItems(page: number = 1) {
-  this.isLoading.set(true); // Si usas Signals
+  this.isLoading.set(true);
   try {
-    const response = await this.itemService.getAll({ 
+    // Construimos el objeto de filtros
+    const filters: any = { 
       page: page, 
-      per_page: 6,
-      // ... otros filtros que tengas activos
-    }) as any;
+      per_page: this.perPage,
+      search: this.searchQuery 
+    };
+
+    // Solo añadimos los filtros si tienen valor
+    if (this.selectedCategory) filters.category_id = this.selectedCategory;
+    if (this.selectedCondition) filters.item_condition = this.selectedCondition;
+    if (this.minPrice !== null) filters.min_price = this.minPrice;
+    if (this.maxPrice !== null) filters.max_price = this.maxPrice;
+
+    const response = await this.itemService.getAll(filters) as any;
     
-    this.items.set(response.results); // Actualiza la lista de items
-    this.currentPage = response.page; // Actualiza la página actual
-    this.totalPages = response.total_pages; // Actualiza el total (vital para el @for de los botones)
+    this.items.set(response.results);
+    this.currentPage = response.page;
+    this.totalPages = response.total_pages;
   } catch (error) {
     console.error("Error al cargar:", error);
   } finally {
@@ -78,17 +90,18 @@ async loadItems(page: number = 1) {
 
   
   onSearch(): void {
-    this.loadItems();
-  }
+  console.log("Lo que el usuario ha escrito es:", this.searchQuery); // Cambia el log aquí también
+  this.loadItems(1);
+}
 
   // Restablece todos los filtros a su estado original
-  clearFilters(): void {
+  clearFilters(){
     this.searchQuery = '';
-    this.selectedCategory = 0;
+    this.selectedCategory = null;
     this.selectedCondition = '';
     this.minPrice = null;
     this.maxPrice = null;
-    this.loadItems();
+    this.loadItems(1);
   }
 
   // Control de cambio de página con scroll arriba automático

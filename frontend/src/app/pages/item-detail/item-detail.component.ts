@@ -22,41 +22,34 @@ export class ItemDetailComponent implements OnInit {
 
   
   activePhoto = '';
-  isLoading: boolean = true;
+  isLoading = signal(true); // Cambiado a Signal 
 
   ngOnInit(): void {
-    const itemId = this.route.snapshot.paramMap.get('id');
-    if (itemId) {
-      this.loadItem(+itemId);
-    } else {
-      this.isLoading = false;
-    }
+  const itemId = this.route.snapshot.paramMap.get('id');
+  if (itemId) {
+    this.loadItem(+itemId);
+  } else {
+    this.isLoading.set(false); // ¡Corregido usando .set()!
   }
+}
 
-  async loadItem(id: number): Promise<void> {
-  this.isLoading = true;
+async loadItem(id: number) {
+  this.isLoading.set(true); 
+
   try {
-    // 1. Guardamos el resultado directo de la API en una constante temporal
-    const product = await this.itemService.getById(id);
+    const response = await this.itemService.getById(id);
+    this.item.set(response); 
     
-    // 2. Introducimos el objeto dentro del Signal usando .set()
-    this.item.set(product);
-
-    // 3. Evaluamos la foto usando la constante temporal
-    if (product && product.cover_photo) {
-      this.activePhoto = product.cover_photo;
+    // Le decimos a TypeScript que confíe en nosotros un momento usando 'any'
+    const itemData: any = response; 
+    
+    if (itemData.photos && itemData.photos.length > 0) {
+      this.activePhoto = itemData.photos[0].url;
     }
-  } catch (error) {
-    console.error('Error al cargar el detalle del anuncio:', error);
-    Swal.fire({
-      title: 'Error',
-      text: 'No se pudo encontrar el anuncio solicitado.',
-      icon: 'error',
-      confirmButtonColor: '#dc3545',
-    });
-    this.router.navigate(['/home']);
+  } catch (err) {
+    console.error("Error al cargar el producto:", err);
   } finally {
-    this.isLoading = false;
+    this.isLoading.set(false); 
   }
 }
 
