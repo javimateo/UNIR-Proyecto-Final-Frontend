@@ -75,18 +75,18 @@
     </div>
     <div class="card-body">
       <form [formGroup]="miFormularioEdicion" (ngSubmit)="guardarCambiosUsuario()">
-        <div class="row">
-          <div class="col">
+        <div class="row g-3">
+          <div class="col-12 col-md-4">
             <label>Username</label>
             <input type="text" class="form-control" formControlName="username" />
           </div>
 
-          <div class="col">
+          <div class="col-12 col-md-4">
             <label>Imagen del usuario</label>
             <input type="text" class="form-control" formControlName="avatar_url" />
           </div>
 
-          <div class="col">
+          <div class="col-12 col-md-4">
             <label>Rol Asignado</label>
             <select class="form-select" formControlName="role">
               <option value="moderator">Moderador</option>

@@ -109,3 +109,21 @@ text-decoration:none;
 background:#086230;
 
 }
+
+@media(max-width:575.98px){
+
+:host{
+
+padding:20px;
+
+}
+
+th, td{
+
+padding:10px 8px;
+
+font-size:14px;
+
+}
+
+}

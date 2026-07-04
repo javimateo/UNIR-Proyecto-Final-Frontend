@@ -29,16 +29,18 @@
     </div>
 
     <!-- Botón de Like (Corazón) en la esquina superior derecha (z-index 10 para quedar sobre el overlay y ser clickable) -->
-    <div class="position-absolute top-0 end-0 m-3" style="z-index: 10;">
-      <button (click)="toggleFavorite($event)"
-              class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center fav-btn"
-              [class.text-danger]="favs.isFavorite(item().id)"
-              [attr.aria-pressed]="favs.isFavorite(item().id)"
-              aria-label="Marcar como favorito"
-              style="width: 36px; height: 36px; border: none; cursor: pointer;">
-        <i class="bi" [ngClass]="favs.isFavorite(item().id) ? 'bi-heart-fill' : 'bi-heart'"></i>
-      </button>
-    </div>
+    @if (showHeart()) {
+      <div class="position-absolute top-0 end-0 m-3" style="z-index: 10;">
+        <button (click)="toggleFavorite($event)"
+                class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center fav-btn"
+                [class.text-danger]="favs.isFavorite(item().id)"
+                [attr.aria-pressed]="favs.isFavorite(item().id)"
+                aria-label="Marcar como favorito"
+                style="width: 36px; height: 36px; border: none; cursor: pointer;">
+          <i class="bi" [ngClass]="favs.isFavorite(item().id) ? 'bi-heart-fill' : 'bi-heart'"></i>
+        </button>
+      </div>
+    }
   </div>
 
   <!-- Cuerpo de la Tarjeta -->
