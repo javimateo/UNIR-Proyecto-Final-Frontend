@@ -1,178 +1,239 @@
 <div class="payment-page">
 
-<div class="payment-card">
+    <div class="payment-container">
 
-<div class="header">
+        <!-- Resumen del pedido -->
 
-<h1>ReMarket</h1>
+        <aside class="order-summary">
 
-<p>Pago seguro 🔒</p>
+            <h2>Resumen del pedido</h2>
 
-</div>
+            <img
+                src="assets/images/tv-placeholder.png"
+                alt="Televisor"
+                class="product-image">
 
-<div class="credit-card" [ngClass]="colorTarjeta">
+            <h3>Samsung QLED 55"</h3>
 
-<div class="brand">
+            <p class="seller">
+                Vendido por <strong>ReMarket</strong>
+            </p>
 
-{{tipoTarjeta}}
+            <div class="product-info">
 
-</div>
+                <p><strong>Estado:</strong> Seminuevo</p>
 
-<div class="number">
+                <p><strong>Garantía:</strong> 2 años</p>
 
-{{numeroTarjeta || '•••• •••• •••• ••••'}}
+                <p><strong>Envío:</strong> Gratuito</p>
 
-</div>
+            </div>
 
-<div class="bottom">
+            <hr>
 
-<div>
+            <div class="price-row">
 
-<small>TITULAR</small>
+                <span>Precio</span>
 
-<p>{{titular || 'NOMBRE APELLIDOS'}}</p>
+                <strong>599 €</strong>
 
-</div>
+            </div>
 
-<div>
+            <div class="price-row">
 
-<small>CADUCIDAD</small>
+                <span>Envío</span>
 
-<p>{{caducidad || 'MM/AA'}}</p>
+                <strong>Gratis</strong>
 
-</div>
+            </div>
 
-</div>
+            <div class="price-row total-row">
 
-</div>
+                <span>Total</span>
 
-<h2>Datos del comprador</h2>
+                <strong>{{ total }} €</strong>
 
-<label>Nombre y apellidos</label>
+            </div>
 
-<input
-type="text"
-[(ngModel)]="nombre">
+        </aside>
 
-<label>Email</label>
+        <!-- Formulario -->
 
-<input
-type="email"
-[(ngModel)]="email">
+        <div class="payment-card">
 
-<label>Teléfono</label>
+            <div class="header">
 
-<input
-type="text"
-[(ngModel)]="telefono">
+                <h1>ReMarket</h1>
 
-<hr>
+                <p>Pago seguro 🔒</p>
 
-<h2>Datos de la tarjeta</h2>
+            </div>
 
-<label>Titular</label>
+            <div class="credit-card" [ngClass]="colorTarjeta">
 
-<input
-type="text"
-[(ngModel)]="titular">
+                <div class="brand">
 
-<label>Número de tarjeta</label>
+                    {{ tipoTarjeta }}
 
-<input
-type="text"
-maxlength="19"
-[(ngModel)]="numeroTarjeta"
-(input)="formatearNumero()"
-placeholder="1234 5678 9012 3456">
+                </div>
 
-<div class="row">
+                <div class="number">
 
-<div>
+                    {{ numeroTarjeta || '•••• •••• •••• ••••' }}
 
-<label>Caducidad</label>
+                </div>
 
-<input
-type="text"
-maxlength="5"
-placeholder="MM/AA"
-[(ngModel)]="caducidad">
+                <div class="bottom">
 
-</div>
+                    <div>
 
-<div>
+                        <small>TITULAR</small>
 
-<label>CVV</label>
+                        <p>{{ titular || 'NOMBRE APELLIDOS' }}</p>
 
-<input
-type="password"
-maxlength="3"
-[(ngModel)]="cvv">
+                    </div>
 
-</div>
+                    <div>
 
-</div>
+                        <small>CADUCIDAD</small>
 
-<hr>
+                        <p>{{ caducidad || 'MM/AA' }}</p>
 
-<h2>Dirección de envío</h2>
+                    </div>
 
-<label>Dirección</label>
+                </div>
 
-<input
-type="text"
-[(ngModel)]="direccion">
+            </div>
 
-<label>Ciudad</label>
+            <h2>Datos del comprador</h2>
 
-<input
-type="text"
-[(ngModel)]="ciudad">
+            <label>Nombre y apellidos</label>
 
-<label>Código Postal</label>
+            <input
+                type="text"
+                [(ngModel)]="nombre">
 
-<input
-type="text"
-maxlength="5"
-[(ngModel)]="codigoPostal">
+            <label>Email</label>
 
-<div class="checkbox">
+            <input
+                type="email"
+                [(ngModel)]="email">
 
-<input
-type="checkbox"
-[(ngModel)]="aceptar">
+            <label>Teléfono</label>
 
-<label>Acepto los términos y condiciones</label>
+            <input
+                type="text"
+                [(ngModel)]="telefono">
 
-</div>
+            <hr>
 
-<div class="total">
+            <h2>Datos de la tarjeta</h2>
 
-<span>Total</span>
+            <label>Titular</label>
 
-<h2>{{total}} €</h2>
+            <input
+                type="text"
+                [(ngModel)]="titular">
 
-</div>
+            <label>Número de tarjeta</label>
 
-<button (click)="pagar()">
+            <input
+                type="text"
+                maxlength="19"
+                [(ngModel)]="numeroTarjeta"
+                (input)="formatearNumero()"
+                placeholder="1234 5678 9012 3456">
 
-PAGAR AHORA
+            <div class="row">
 
-</button>
+                <div>
 
-@if(pagoCorrecto){
+                    <label>Caducidad</label>
 
-<div class="success">
+                    <input
+                        type="text"
+                        maxlength="5"
+                        placeholder="MM/AA"
+                        [(ngModel)]="caducidad">
 
-<h2>✅ Pago realizado correctamente</h2>
+                </div>
 
-<p>Gracias por comprar en ReMarket</p>
+                <div>
 
-<p>Tu pedido llegará en 24-48 horas.</p>
+                    <label>CVV</label>
 
-</div>
+                    <input
+                        type="password"
+                        maxlength="3"
+                        [(ngModel)]="cvv">
 
-}
+                </div>
 
-</div>
+            </div>
+
+            <hr>
+
+            <h2>Dirección de envío</h2>
+
+            <label>Dirección</label>
+
+            <input
+                type="text"
+                [(ngModel)]="direccion">
+
+            <label>Ciudad</label>
+
+            <input
+                type="text"
+                [(ngModel)]="ciudad">
+
+            <label>Código Postal</label>
+
+            <input
+                type="text"
+                maxlength="5"
+                [(ngModel)]="codigoPostal">
+
+            <div class="checkbox">
+
+                <input
+                    type="checkbox"
+                    [(ngModel)]="aceptar">
+
+                <label>Acepto los términos y condiciones</label>
+
+            </div>
+
+            <div class="total">
+
+                <span>Total</span>
+
+                <h2>{{ total }} €</h2>
+
+            </div>
+
+            <button (click)="pagar()">
+
+                PAGAR AHORA
+
+            </button>
+
+            @if(pagoCorrecto){
+
+                <div class="success">
+
+                    <h2>✅ Pago realizado correctamente</h2>
+
+                    <p>Gracias por comprar en ReMarket.</p>
+
+                    <p>Tu pedido llegará en 24-48 horas.</p>
+
+                </div>
+
+            }
+
+        </div>
+
+    </div>
 
 </div>
