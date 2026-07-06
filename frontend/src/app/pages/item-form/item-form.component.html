@@ -1,0 +1,213 @@
+<div class="container my-4" style="max-width: 800px;">
+  <!-- Botón Volver -->
+  <div class="mb-4">
+    <a [routerLink]="isEditMode ? ['/anuncio', itemId] : ['/home']" class="btn btn-link text-decoration-none text-secondary p-0 fw-semibold d-inline-flex align-items-center gap-1">
+      <i class="bi bi-arrow-left"></i> Cancelar y volver
+    </a>
+  </div>
+
+  <div class="card border-0 shadow-sm rounded-4 bg-white p-4 p-md-5">
+    <h2 class="fw-extrabold text-dark mb-2">
+      {{ isEditMode ? 'Editar Anuncio' : 'Publicar nuevo anuncio' }}
+    </h2>
+    <p class="text-muted mb-4">
+      {{ isEditMode ? 'Modifica los datos que necesites actualizar de tu anuncio.' : 'Introduce los detalles de tu artículo para publicarlo en la plataforma.' }}
+    </p>
+
+    @if (isLoading && isEditMode) {
+      <div class="d-flex flex-column justify-content-center align-items-center py-5">
+        <div class="spinner-border text-success mb-3" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="text-muted small">Cargando los datos del anuncio...</p>
+      </div>
+    } @else {
+      <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" class="needs-validation">
+        
+        <!-- Fila: Título del artículo -->
+        <div class="mb-4">
+          <label for="title" class="form-label fw-bold text-dark">Título del anuncio *</label>
+          <input 
+            type="text" 
+            id="title"
+            formControlName="title"
+            class="form-control bg-light py-2.5 rounded-3 border-light-subtle" 
+            placeholder="Ej. iPhone 13 Pro 128GB casi nuevo"
+            [class.is-invalid]="checkControl('title', 'required') || checkControl('title', 'minlength') || checkControl('title', 'maxlength')"
+          >
+          @if (checkControl('title', 'required')) {
+            <div class="invalid-feedback">El título del anuncio es obligatorio.</div>
+          }
+          @if (checkControl('title', 'minlength')) {
+            <div class="invalid-feedback">El título debe tener al menos 5 caracteres.</div>
+          }
+          @if (checkControl('title', 'maxlength')) {
+            <div class="invalid-feedback">El título no puede superar los 100 caracteres.</div>
+          }
+        </div>
+
+        <!-- Fila: Precio, Categoría y Estado -->
+        <div class="row g-3 mb-4">
+          <!-- Precio -->
+          <div class="col-md-4">
+            <label for="price" class="form-label fw-bold text-dark">Precio (€) *</label>
+            <div class="input-group">
+              <span class="input-group-text bg-light border-light-subtle rounded-start-3">€</span>
+              <input 
+                type="number" 
+                id="price"
+                formControlName="price"
+                class="form-control bg-light py-2.5 rounded-end-3 border-light-subtle" 
+                placeholder="0.00"
+                [class.is-invalid]="checkControl('price', 'required') || checkControl('price', 'min')"
+              >
+              @if (checkControl('price', 'required')) {
+                <div class="invalid-feedback">El precio es obligatorio.</div>
+              }
+              @if (checkControl('price', 'min')) {
+                <div class="invalid-feedback">El precio debe ser mayor a 0 €.</div>
+              }
+            </div>
+          </div>
+
+          <!-- Categoría -->
+          <div class="col-md-4">
+            <label for="category_id" class="form-label fw-bold text-dark">Categoría *</label>
+            <select 
+              id="category_id"
+              formControlName="category_id"
+              class="form-select bg-light py-2.5 rounded-3 border-light-subtle"
+              [class.is-invalid]="checkControl('category_id', 'required')"
+            >
+              <option value="" disabled>Selecciona una</option>
+              @for (cat of categories; track cat.id) {
+                <option [value]="cat.id">{{ cat.name }}</option>
+              }
+            </select>
+            @if (checkControl('category_id', 'required')) {
+              <div class="invalid-feedback">Debes elegir una categoría.</div>
+            }
+          </div>
+
+          <!-- Estado de conservación -->
+          <div class="col-md-4">
+            <label for="item_condition" class="form-label fw-bold text-dark">Estado de conservación *</label>
+            <select 
+              id="item_condition"
+              formControlName="item_condition"
+              class="form-select bg-light py-2.5 rounded-3 border-light-subtle"
+              [class.is-invalid]="checkControl('item_condition', 'required')"
+            >
+              <option value="" disabled>Selecciona uno</option>
+              @for (cond of conditions; track cond.value) {
+                <option [value]="cond.value">{{ cond.label }}</option>
+              }
+            </select>
+            @if (checkControl('item_condition', 'required')) {
+              <div class="invalid-feedback">Debes elegir el estado del artículo.</div>
+            }
+          </div>
+        </div>
+
+        <!-- Fila: Ubicación -->
+        <div class="mb-4">
+          <label for="location" class="form-label fw-bold text-dark">Localización *</label>
+          <div class="input-group">
+            <span class="input-group-text bg-light border-light-subtle rounded-start-3"><i class="bi bi-geo-alt-fill text-muted"></i></span>
+            <input 
+              type="text" 
+              id="location"
+              formControlName="location"
+              class="form-control bg-light py-2.5 rounded-end-3 border-light-subtle" 
+              placeholder="Ej. Madrid, Barcelona..."
+              [class.is-invalid]="checkControl('location', 'required') || checkControl('location', 'minlength')"
+            >
+            @if (checkControl('location', 'required')) {
+              <div class="invalid-feedback">La localización es obligatoria.</div>
+            }
+            @if (checkControl('location', 'minlength')) {
+              <div class="invalid-feedback">Debe contener al menos 3 caracteres.</div>
+            }
+          </div>
+        </div>
+
+        <!-- Fila: Descripción -->
+        <div class="mb-4">
+          <label for="description" class="form-label fw-bold text-dark">Descripción detallada</label>
+          <textarea 
+            id="description"
+            formControlName="description"
+            rows="5"
+            class="form-control bg-light py-2.5 rounded-3 border-light-subtle" 
+            placeholder="Describe las características del artículo, su funcionamiento, marcas de uso, qué incluye..."
+            [class.is-invalid]="checkControl('description', 'maxlength')"
+          ></textarea>
+          @if (checkControl('description', 'maxlength')) {
+            <div class="invalid-feedback">La descripción no puede superar los 1000 caracteres.</div>
+          }
+        </div>
+
+        <!-- Fila: Subida de imágenes -->
+        <div class="mb-5">
+          <label class="form-label fw-bold text-dark d-block">Fotografías del artículo</label>
+          
+          <!-- Botón personalizado para subir archivos -->
+          <div class="upload-zone rounded-4 p-4 text-center border-dashed position-relative bg-light mb-3">
+            <i class="bi bi-cloud-upload fs-1 text-success mb-2 d-block"></i>
+            <span class="fw-semibold text-dark">Haz clic para subir fotos</span>
+            <p class="text-muted small mb-0">Puedes seleccionar múltiples archivos JPG, PNG</p>
+            <input 
+              type="file" 
+              multiple 
+              accept="image/*" 
+              (change)="onFileSelected($event)" 
+              class="position-absolute top-0 start-0 w-100 h-100 opacity-0 cursor-pointer"
+            >
+          </div>
+
+          <!-- Vista previa de fotos cargadas -->
+          @if (uploadedPhotos.length > 0) {
+            <div class="row row-cols-2 row-cols-sm-4 g-3">
+              @for (photo of uploadedPhotos; track $index) {
+                <div class="col">
+                  <div class="preview-img-card position-relative rounded-3 overflow-hidden border">
+                    <img [src]="photo" alt="Vista previa" class="preview-img">
+                    <button 
+                      type="button" 
+                      (click)="removePhoto($index)" 
+                      class="btn btn-danger btn-sm rounded-circle position-absolute top-0 end-0 m-2 p-0 d-flex align-items-center justify-content-center"
+                      style="width: 28px; height: 28px;"
+                    >
+                      <i class="bi bi-trash-fill fs-6"></i>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="d-flex justify-content-end gap-3 pt-3 border-top">
+          <a [routerLink]="isEditMode ? ['/anuncio', itemId] : ['/home']" class="btn btn-light px-4 py-2.5 rounded-3 fw-semibold">
+            Cancelar
+          </a>
+          <button 
+            type="submit" 
+            class="btn btn-success px-5 py-2.5 rounded-3 fw-bold shadow-sm d-flex align-items-center gap-2"
+            [disabled]="isLoading"
+          >
+            @if (isLoading) {
+              <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+              Procesando...
+            } @else {
+              <i class="bi bi-check-circle-fill"></i>
+              {{ isEditMode ? 'Guardar Cambios' : 'Publicar Anuncio' }}
+            }
+          </button>
+        </div>
+
+      </form>
+    }
+  </div>
+</div>

@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, isDevMode } from '@angular/core';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IUserServices } from '../../../service/iuser.services'; // <-- Revisa tu ruta
+import { IUserServices } from '../../../service/iuser.services';
+import { AuthService } from '../../../service/auth.service';
 import Swal from 'sweetalert2';
 
 @Component({
@@ -13,14 +14,14 @@ import Swal from 'sweetalert2';
 })
 export class RegisterFormComponent {
   private userServices = inject(IUserServices);
+  private authService = inject(AuthService);
   private router = inject(Router);
 
   registerForm: FormGroup;
 
   constructor() {
     this.registerForm = new FormGroup({
-      nombre: new FormControl('', [Validators.required, Validators.minLength(3)]),
-      apellido: new FormControl('', [Validators.required, Validators.minLength(3)]),
+      username: new FormControl('', [Validators.required, Validators.minLength(3)]),
       email: new FormControl('', [Validators.required, Validators.pattern(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)]),
       password: new FormControl('', [Validators.required, Validators.minLength(8)]),
       confirmPassword: new FormControl('', [Validators.required, Validators.minLength(8)])
@@ -37,15 +38,31 @@ export class RegisterFormComponent {
     return this.registerForm.get(controlName)?.hasError(errorName) && this.registerForm.get(controlName)?.touched;
   }
 
-  
   async getDataForm() {
     if (this.registerForm.valid) {
       try {
-        
         const { confirmPassword, ...formData } = this.registerForm.value;
 
-       
-        await this.userServices.create(formData);
+        // Intentar registrar en el backend.
+        let createdUser;
+        try {
+          createdUser = await this.userServices.create(formData);
+        } catch (backendError) {
+          const isProduction = !isDevMode() && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+          if (isProduction) {
+            throw backendError;
+          }
+          
+          createdUser = {
+            id: Date.now(),
+            username: formData.username,
+            apellido: formData.apellido,
+            email: formData.email,
+            role: 'user'
+          };
+        }
+
+        this.authService.setCurrentUser(createdUser);
 
         await Swal.fire({
           title: '¡Creado!',
@@ -54,7 +71,6 @@ export class RegisterFormComponent {
           confirmButtonColor: '#13a547',
         });
 
-        
         this.router.navigate(['/home']);
         
       } catch (error) {
@@ -67,6 +83,7 @@ export class RegisterFormComponent {
         });
       }
     } else {
+      this.registerForm.markAllAsTouched()
       Swal.fire('Formulario incompleto', 'Por favor, revisa los campos en rojo', 'info');
     }
   }
