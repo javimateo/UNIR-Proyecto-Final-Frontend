@@ -1,45 +1,47 @@
-<article class="container-fluid  mt-5 w-100 d-flex">
-  
-  <div class="border-end border-success p-3" style="width: 25%;">
-    <h1 class="card-title border rounded p-2 text-light mb-3">Panel del administrador</h1>
-    <div class="d-flex flex-column gap-3">
-      
-      <button class="btn w-100 py-2 fw-bold" 
-              [class.btn-success]="seccionActiva === 'usuarios'"
-              [class.btn-light]="seccionActiva !== 'usuarios'"
-              (click)="cambiarSeccion('usuarios')">
-        Usuarios
-      </button>
+<article class="container-fluid mt-5">
+  <div class="row g-0">
 
-      <button class="btn w-100 py-2 fw-bold" 
-              [class.btn-success]="seccionActiva === 'categorias'"
-              [class.btn-light]="seccionActiva !== 'categorias'"
-              (click)="cambiarSeccion('categorias')">
-        Categorías
-      </button>
+    <div class="col-12 col-lg-3 border-end border-success p-3">
+      <h1 class="card-title border rounded p-2 text-light mb-3">Panel del administrador</h1>
+      <div class="d-flex flex-column gap-3">
 
-      <button class="btn w-100 py-2 fw-bold" 
-              [class.btn-success]="seccionActiva === 'estadisticas'"
-              [class.btn-light]="seccionActiva !== 'estadisticas'"
-              (click)="cambiarSeccion('estadisticas')">
-        Estadísticas globales
-      </button>
+        <button class="btn w-100 py-2 fw-bold"
+                [class.btn-success]="seccionActiva === 'usuarios'"
+                [class.btn-light]="seccionActiva !== 'usuarios'"
+                (click)="cambiarSeccion('usuarios')">
+          Usuarios
+        </button>
 
+        <button class="btn w-100 py-2 fw-bold"
+                [class.btn-success]="seccionActiva === 'categorias'"
+                [class.btn-light]="seccionActiva !== 'categorias'"
+                (click)="cambiarSeccion('categorias')">
+          Categorías
+        </button>
+
+        <button class="btn w-100 py-2 fw-bold"
+                [class.btn-success]="seccionActiva === 'estadisticas'"
+                [class.btn-light]="seccionActiva !== 'estadisticas'"
+                (click)="cambiarSeccion('estadisticas')">
+          Estadísticas globales
+        </button>
+
+      </div>
     </div>
-  </div>
 
-  <div class="p-4" style="width: 75%;">
-    @switch (seccionActiva) {
-      @case ('usuarios') {
-        <app-usuario />
+    <div class="col-12 col-lg-9 p-4">
+      @switch (seccionActiva) {
+        @case ('usuarios') {
+          <app-usuario />
+        }
+        @case ('categorias') {
+          <app-categorias />
+        }
+        @case ('estadisticas') {
+          <app-estadisticas-globales />
+        }
       }
-      @case ('categorias') {
-        <app-categorias />
-      }
-      @case ('estadisticas') {
-        <app-estadisticas-globales />
-      }
-    }
-  </div>
+    </div>
 
+  </div>
 </article>

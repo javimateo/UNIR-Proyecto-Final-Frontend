@@ -2,8 +2,7 @@ import { Component, input, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { IItem } from '../../interface/iitem.interface';
-import { AuthService } from '../../service/auth.service';
-import Swal from 'sweetalert2';
+import { FavoritesService } from '../../service/favorites.service';
 
 @Component({
   selector: 'app-item-card',
@@ -13,51 +12,14 @@ import Swal from 'sweetalert2';
   styleUrls: ['./item-card.component.css']
 })
 export class ItemCardComponent {
-  authService = inject(AuthService);
+  favs = inject(FavoritesService);
 
-  // Usamos el input signal de Angular moderno
   item = input.required<IItem>();
+  showHeart = input<boolean>(true);
 
-  // Helper para verificar si está marcado como favorito
-  isFavorite(): boolean {
-    const currentUser = this.authService.currentUser();
-    const favKey = currentUser ? `favs_${currentUser.username}` : 'favs_guest';
-    const savedFavs: number[] = JSON.parse(localStorage.getItem(favKey) || '[]');
-    const id = this.item().id;
-    return id !== undefined && savedFavs.includes(id);
-  }
-
-  // Alternar el estado de favorito
   toggleFavorite(event: Event): void {
     event.stopPropagation();
-    const currentUser = this.authService.currentUser();
-    const favKey = currentUser ? `favs_${currentUser.username}` : 'favs_guest';
-    let savedFavs: number[] = JSON.parse(localStorage.getItem(favKey) || '[]');
-    const id = this.item().id;
-    if (id === undefined) return;
-
-    if (savedFavs.includes(id)) {
-      savedFavs = savedFavs.filter(favId => favId !== id);
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: 'Eliminado de favoritos',
-        showConfirmButton: false,
-        timer: 1500
-      });
-    } else {
-      savedFavs.push(id);
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'success',
-        title: 'Añadido a favoritos',
-        showConfirmButton: false,
-        timer: 1500
-      });
-    }
-    localStorage.setItem(favKey, JSON.stringify(savedFavs));
+    this.favs.toggle(this.item().id);
   }
 
   // Helper para traducir el estado de conservación

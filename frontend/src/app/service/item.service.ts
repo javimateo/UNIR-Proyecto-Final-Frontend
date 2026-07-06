@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, isDevMode } from '@angular/core';
 import { IItem } from '../interface/iitem.interface';
 import { lastValueFrom } from 'rxjs';
 
@@ -8,13 +8,22 @@ import { lastValueFrom } from 'rxjs';
 })
 export class ItemService {
   private httpClient = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000/api/items';
   private getHeaders(): HttpHeaders {
     // Aquí recuperamos el token del lugar donde lo guardes al hacer login
     const token = localStorage.getItem('token'); 
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
+  }
+
+  private get baseUrl(): string {
+    return this.isProduction()
+      ? 'https://unir-proyecto-final-backend-production.up.railway.app/api/items'
+      : 'http://localhost:3000/api/items';
+  }
+
+  private isProduction(): boolean {
+    return !isDevMode() && typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
   }
 
   
