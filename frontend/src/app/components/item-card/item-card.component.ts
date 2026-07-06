@@ -15,6 +15,7 @@ export class ItemCardComponent {
   favs = inject(FavoritesService);
 
   item = input.required<IItem>();
+  showHeart = input<boolean>(true);
 
   toggleFavorite(event: Event): void {
     event.stopPropagation();

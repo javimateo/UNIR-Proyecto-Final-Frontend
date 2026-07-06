@@ -84,7 +84,7 @@
         <div *ngIf="!isLoadingItems && myItems.length > 0" class="row row-cols-1 row-cols-md-2 g-4">
           <div *ngFor="let item of myItems" class="col">
             <div class="position-relative h-100">
-              <app-item-card [item]="item"></app-item-card>
+              <app-item-card [item]="item" [showHeart]="false"></app-item-card>
               
               <!-- Controles de Edición rápidos -->
               <div class="position-absolute top-0 end-0 m-3 z-3 d-flex gap-1.5 bg-dark-subtle p-1.5 rounded-3 shadow">
@@ -118,7 +118,7 @@
         <div *ngIf="favoriteItems.length > 0" class="row row-cols-1 row-cols-md-2 g-4">
           <div *ngFor="let item of favoriteItems" class="col">
             <div class="position-relative h-100">
-              <app-item-card [item]="item"></app-item-card>
+              <app-item-card [item]="item" [showHeart]="false"></app-item-card>
               <!-- Botón rápido para eliminar de favoritos -->
               <button 
                 (click)="removeFavorite(item.id!)" 
