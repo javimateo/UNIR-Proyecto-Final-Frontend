@@ -1,40 +1,47 @@
 <form [formGroup]="loginForm" (ngSubmit)="getDataForm()">
 
+  <h2 class="form-title">Bienvenido de vuelta</h2>
+  <p class="form-subtitle">Inicia sesión para gestionar tus artículos.</p>
+
   <div class="mb-3">
     <label class="form-label fw-bold">Correo Electrónico</label>
-    <input 
-      type="email" 
-      formControlName="email" 
+    <input
+      type="email"
+      formControlName="email"
       class="form-control"
-      placeholder="Introduce tu correo"
-      [class.is-invalid]="checkControl('email', 'required') || checkControl('email', 'pattern')"
+      placeholder="tu@email.com"
     />
-    <div class="invalid-feedback">
-      Por favor, introduce un correo electrónico válido.
-    </div>
+    @if(checkControl('email','required')){
+      <p class="error">Campo obligatorio</p>
+    }
+    @if (checkControl('email','pattern')) {
+      <p class="error">El email no es válido</p>
+    }
   </div>
 
   <div class="mb-4">
     <label class="form-label fw-bold">Contraseña</label>
-    <input 
-      type="password" 
-      formControlName="password" 
+    <input
+      type="password"
+      formControlName="password"
       class="form-control"
-      placeholder="Introduce tu contraseña"
-      [class.is-invalid]="checkControl('password', 'required') || checkControl('password', 'minlength')"
+      placeholder="••••••••"
     />
-    <div class="invalid-feedback">
-      La contraseña debe tener al menos 8 caracteres.
-    </div>
+    @if (checkControl('password','required')) {
+      <p class="error">Contraseña requerida</p>
+    }
+    @if (checkControl('password','minlength')) {
+      <p class="error">La contraseña debe tener al menos 8 caracteres</p>
+    }
   </div>
 
   <div class="d-grid">
-    <button 
-      type="submit" 
-      class="btn btn-primary btn-lg"
+    <button
+      type="submit"
+      class="btn-submit"
       [disabled]="loginForm.invalid"
     >
-      Login
+      <i class="bi bi-box-arrow-in-right me-2"></i> Entrar
     </button>
   </div>
 

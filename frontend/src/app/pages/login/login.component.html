@@ -1,33 +1,35 @@
-<article class="container mt-5" style="max-width: 550px;">
-  <div class="card shadow">
-    
-    <div class="card-header bg-white pt-3 border-0">
-      <div class="d-flex justify-content-center gap-2">
-        
-        <button 
-          type="button"
-          class="btn w-50 py-2 fw-bold"
-          [class.btn-primary]="mostrarLogin"
-          [class.btn-light]="!mostrarLogin"
-          (click)="mostrarLogin = true"
-        >
-          Iniciar Sesión
-        </button>
+<div class="login-wrapper">
 
-        <button 
-          type="button"
-          class="btn w-50 py-2 fw-bold"
-          [class.btn-primary]="!mostrarLogin"
-          [class.btn-light]="mostrarLogin"
-          (click)="mostrarLogin = false"
-        >
-          Registrarse
-        </button>
+  <!-- Logo encima de la card -->
+  <div class="brand">
+    <div class="brand-icon">RM</div>
+    <span class="brand-name">Re<span class="brand-market">Market</span></span>
+  </div>
 
-      </div>
+  <div class="login-card">
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="mostrarLogin"
+        (click)="mostrarLogin = true"
+      >
+        <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar sesión
+      </button>
+      <button
+        type="button"
+        class="tab-btn"
+        [class.active]="!mostrarLogin"
+        (click)="mostrarLogin = false"
+      >
+        <i class="bi bi-person-plus me-1"></i> Registrarse
+      </button>
     </div>
 
-    <div class="card-body p-4">
+    <!-- Forms -->
+    <div class="form-area">
       @if (mostrarLogin) {
         <app-login-form></app-login-form>
       } @else {
@@ -36,4 +38,4 @@
     </div>
 
   </div>
-</article>
+</div>

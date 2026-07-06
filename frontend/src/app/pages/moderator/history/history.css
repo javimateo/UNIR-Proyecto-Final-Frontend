@@ -118,13 +118,19 @@ color:#0B61A4;
 
 }
 
-@media(max-width:900px){
+@media(max-width:575.98px){
 
-table{
+:host{
 
-display:block;
+padding:20px;
 
-overflow-x:auto;
+}
+
+th, td{
+
+padding:10px 8px;
+
+font-size:14px;
 
 }
 

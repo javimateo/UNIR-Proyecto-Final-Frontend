@@ -151,11 +151,8 @@
             </div>
 
             <div class="total">
-
-                <span>Total del pedido</span>
-
-                <h2>{{ producto.precio }} €</h2>
-
+             <span>Total del pedido</span>
+             <h2>{{ producto?.price }} €</h2>
             </div>
 
             <button (click)="confirmarCompra()">

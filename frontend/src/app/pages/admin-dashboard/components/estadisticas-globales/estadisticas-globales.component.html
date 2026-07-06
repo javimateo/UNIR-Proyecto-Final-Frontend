@@ -1,0 +1,73 @@
+@if (estadisticas) {
+  <div class="mt-4">
+
+    <!-- SECCIÓN USUARIOS -->
+    <h4 class="mb-3 text-muted">Resumen de Usuarios</h4>
+    <div class="row g-3 mb-4">
+      <div class="col-12 col-sm-4">
+        <div class="card bg-primary text-white p-3 text-center border-0 shadow-sm h-100">
+          <h6>Total Usuarios</h6>
+          <h2 class="fw-bold m-0">{{ estadisticas.users.total }}</h2>
+        </div>
+      </div>
+      <div class="col-12 col-sm-4">
+        <div class="card bg-success text-white p-3 text-center border-0 shadow-sm h-100">
+          <h6>Activos</h6>
+          <h2 class="fw-bold m-0">{{ estadisticas.users.active }}</h2>
+        </div>
+      </div>
+      <div class="col-12 col-sm-4">
+        <div class="card bg-danger text-white p-3 text-center border-0 shadow-sm h-100">
+          <h6>Bloqueados</h6>
+          <h2 class="fw-bold m-0">{{ estadisticas.users.blocked }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN ARTÍCULOS (ITEMS) -->
+    <h4 class="mb-3 text-muted">Inventario de Artículos</h4>
+    <div class="row g-3 mb-4">
+      <div class="col-12 col-sm-4">
+        <div class="card bg-dark text-white p-3 text-center border-0 shadow-sm h-100">
+          <h6>Artículos Totales</h6>
+          <h2 class="fw-bold m-0">{{ estadisticas.items.total }}</h2>
+        </div>
+      </div>
+      <div class="col-12 col-sm-4">
+        <div class="card bg-info text-white p-3 text-center border-0 shadow-sm h-100">
+          <h6>Publicados (Últimos 30 días)</h6>
+          <h2 class="fw-bold m-0">{{ estadisticas.recent.published_last_30d }}</h2>
+        </div>
+      </div>
+      <div class="col-12 col-sm-4">
+        <div class="card bg-warning text-dark p-3 text-center border-0 shadow-sm h-100">
+          <h6>Vendidos</h6>
+          <h2 class="fw-bold m-0">{{ estadisticas.items.sold }}</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECCIÓN REPORTES -->
+    <h4 class="mb-3 text-muted">Centro de Soporte</h4>
+    <div class="row g-3">
+      <div class="col-12 col-sm-6">
+        <div class="card bg-secondary text-white p-3 text-center border-0 shadow-sm h-100">
+          <h6>Reportes Totales</h6>
+          <h2 class="fw-bold m-0">{{ estadisticas.reports.total }}</h2>
+        </div>
+      </div>
+      <div class="col-12 col-sm-6">
+        <div class="card bg-danger text-white p-3 text-center border-0 shadow-sm h-100">
+          <h6>Pendientes de Revisión</h6>
+          <h2 class="fw-bold m-0">{{ estadisticas.reports.pending }}</h2>
+        </div>
+      </div>
+    </div>
+
+  </div>
+} @else {
+  <div class="text-center mt-5 text-muted">
+    <div class="spinner-border text-primary mb-2" role="status"></div>
+    <p>Cargando panel analítico...</p>
+  </div>
+}

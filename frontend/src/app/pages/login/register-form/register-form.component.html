@@ -1,70 +1,82 @@
 <form [formGroup]="registerForm" (ngSubmit)="getDataForm()">
-  
-  <h3 class="text-center mb-4 text-secondary">Crea tu Cuenta</h3>
 
-  <div class="row">
-    <div class="col-md-6 mb-3">
-      <label class="form-label fw-bold">Nombre</label>
-      <input 
-        type="text" 
-        formControlName="nombre" 
-        class="form-control"
-        [class.is-invalid]="checkControl('nombre', 'required') || checkControl('nombre', 'minlength')"
-      />
-      <div class="invalid-feedback">El nombre es obligatorio (min. 3 letras).</div>
-    </div>
+  <h2 class="form-title">Crea tu cuenta</h2>
+  <p class="form-subtitle">Empieza a comprar y vender en ReMarket.</p>
 
-    <div class="col-md-6 mb-3">
-      <label class="form-label fw-bold">Apellido</label>
-      <input 
-        type="text" 
-        formControlName="apellido" 
-        class="form-control"
-        [class.is-invalid]="checkControl('apellido', 'required') || checkControl('apellido', 'minlength')"
-      />
-      <div class="invalid-feedback">El apellido es obligatorio (min. 3 letras).</div>
-    </div>
+  <div class="mb-3">
+    <label class="form-label fw-bold">Nombre de usuario</label>
+    <input
+      type="text"
+      formControlName="username"
+      class="form-control"
+      placeholder="javi_market"
+    />
+    @if(checkControl('username','required')){
+      <p class="error">Campo obligatorio</p>
+    }
+    @if(checkControl('username','minlength')){
+      <p class="error">Este campo debe tener al menos 3 caracteres</p>
+    }
   </div>
 
   <div class="mb-3">
     <label class="form-label fw-bold">Correo Electrónico</label>
-    <input 
-      type="email" 
-      formControlName="email" 
+    <input
+      type="email"
+      formControlName="email"
       class="form-control"
-      [class.is-invalid]="checkControl('email', 'required') || checkControl('email', 'pattern')"
+      placeholder="tu@email.com"
     />
-    <div class="invalid-feedback">Introduce un correo electrónico válido.</div>
+    @if (checkControl('email','required')) {
+      <p class="error">Campo obligatorio</p>
+    }
+    @if (checkControl('email','pattern')) {
+      <p class="error">El email debe ser válido</p>
+    }
   </div>
 
   <div class="mb-3">
     <label class="form-label fw-bold">Contraseña</label>
-    <input 
-      type="password" 
-      formControlName="password" 
+    <input
+      type="password"
+      formControlName="password"
       class="form-control"
-      [class.is-invalid]="checkControl('password', 'required') || checkControl('password', 'minlength')"
+      placeholder="••••••••"
     />
-    <div class="invalid-feedback">La contraseña debe tener mínimo 8 caracteres.</div>
+    @if (checkControl('password','required')) {
+      <p class="error">Campo obligatorio</p>
+    }
+    @if (checkControl('password','minlength')) {
+      <p class="error">La contraseña debe tener al menos 8 caracteres</p>
+    }
   </div>
 
   <div class="mb-4">
     <label class="form-label fw-bold">Confirmar Contraseña</label>
-    <input 
-      type="password" 
-      formControlName="confirmPassword" 
+    <input
+      type="password"
+      formControlName="confirmPassword"
       class="form-control"
-      [class.is-invalid]="checkControl('confirmPassword', 'required') || registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched"
+      placeholder="••••••••"
+      [class.is-invalid]="
+        registerForm.hasError('passwordMismatch') &&
+        (registerForm.get('password')?.touched || registerForm.get('confirmPassword')?.touched)
+      "
     />
-    @if (registerForm.hasError('passwordMismatch') && registerForm.get('confirmPassword')?.touched) {
-      <div class="text-danger small mt-1">Las contraseñas no coinciden.</div>
-    } @else {
-      <div class="invalid-feedback">Este campo es obligatorio.</div>
+    @if (registerForm.hasError('passwordMismatch') &&
+      (registerForm.get('password')?.touched || registerForm.get('confirmPassword')?.touched)) {
+      <p class="error">Las contraseñas no coinciden.</p>
     }
   </div>
 
   <div class="d-grid">
-    <input type="submit" class="btn btn-primary btn-lg" [disabled]="!registerForm.valid" >
+    <button
+      type="submit"
+      class="btn-submit"
+      [disabled]="!registerForm.valid"
+    >
+      <i class="bi bi-person-plus me-2"></i> Crear cuenta
+    </button>
   </div>
 
 </form>

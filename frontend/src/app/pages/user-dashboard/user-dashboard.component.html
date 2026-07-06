@@ -1,0 +1,296 @@
+<div class="row">
+  <!-- Navegación del Panel (Sidebar) -->
+  <div class="col-lg-3 mb-4">
+    <div class="card border-0 shadow-sm rounded-4 p-3 bg-white dashboard-sidebar">
+      <div class="d-flex align-items-center gap-3 p-3 border-bottom border-light mb-3">
+        <div class="user-avatar bg-success-subtle text-success rounded-circle d-flex align-items-center justify-content-center fw-bold fs-4">
+          {{ (authService.currentUser()?.username || 'U')[0].toUpperCase() }}
+        </div>
+        <div>
+          <h5 class="fw-bold mb-0 text-dark">{{ authService.currentUser()?.username }}</h5>
+          <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 text-xs fw-semibold">Usuario Verificado</span>
+        </div>
+      </div>
+
+      <div class="nav flex-column nav-pills gap-1">
+        <button 
+          (click)="setTab('anuncios')" 
+          class="nav-link text-start py-2.5 px-3 rounded-3 d-flex align-items-center gap-2.5 fw-semibold"
+          [class.active]="activeTab === 'anuncios'"
+        >
+          <i class="bi bi-grid-3x3-gap"></i> Mis anuncios
+          <span *ngIf="myItems.length > 0" class="badge bg-light text-dark ms-auto font-monospace">{{ myItems.length }}</span>
+        </button>
+        
+        <button 
+          (click)="setTab('favoritos')" 
+          class="nav-link text-start py-2.5 px-3 rounded-3 d-flex align-items-center gap-2.5 fw-semibold"
+          [class.active]="activeTab === 'favoritos'"
+        >
+          <i class="bi bi-heart"></i> Mis favoritos
+          <span *ngIf="favoriteItems.length > 0" class="badge bg-light text-dark ms-auto font-monospace">{{ favoriteItems.length }}</span>
+        </button>
+        
+        <button 
+          (click)="setTab('mensajes')" 
+          class="nav-link text-start py-2.5 px-3 rounded-3 d-flex align-items-center gap-2.5 fw-semibold"
+          [class.active]="activeTab === 'mensajes'"
+        >
+          <i class="bi bi-chat-left-dots"></i> Mensajes
+          <span *ngIf="chats[0].unread" class="badge bg-danger ms-auto rounded-circle p-1"><span class="visually-hidden">Mensajes nuevos</span></span>
+        </button>
+        
+        <button 
+          (click)="setTab('perfil')" 
+          class="nav-link text-start py-2.5 px-3 rounded-3 d-flex align-items-center gap-2.5 fw-semibold"
+          [class.active]="activeTab === 'perfil'"
+        >
+          <i class="bi bi-person-gear"></i> Mi perfil
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor de Contenidos -->
+  <div class="col-lg-9">
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white" style="min-height: 480px;">
+      
+      <!-- PESTAÑA: MIS ANUNCIOS -->
+      <div *ngIf="activeTab === 'anuncios'">
+        <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3 border-light-subtle">
+          <div>
+            <h3 class="fw-bold text-dark mb-1">Mis Anuncios</h3>
+            <p class="text-muted mb-0 small">Administra los anuncios que has publicado en la plataforma.</p>
+          </div>
+          <a routerLink="/anuncio/nuevo" class="btn btn-success rounded-pill fw-bold shadow-sm d-flex align-items-center gap-1.5 px-4 py-2 text-sm">
+            <i class="bi bi-plus-circle"></i> Nuevo Anuncio
+          </a>
+        </div>
+
+        <div *ngIf="isLoadingItems" class="text-center py-5">
+          <div class="spinner-border text-success" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+        </div>
+
+        <div *ngIf="!isLoadingItems && myItems.length === 0" class="text-center py-5">
+          <i class="bi bi-folder-x fs-1 text-muted mb-3 d-block"></i>
+          <h5 class="fw-bold text-dark">No has publicado anuncios</h5>
+          <p class="text-muted small">Crea tu primer anuncio para empezar a vender tus artículos de segunda mano.</p>
+          <a routerLink="/anuncio/nuevo" class="btn btn-success rounded-pill px-4 mt-3 fw-semibold">Publicar ahora</a>
+        </div>
+
+        <!-- Listado de Anuncios -->
+        <div *ngIf="!isLoadingItems && myItems.length > 0" class="row row-cols-1 row-cols-md-2 g-4">
+          <div *ngFor="let item of myItems" class="col">
+            <div class="position-relative h-100">
+              <app-item-card [item]="item" [showHeart]="false"></app-item-card>
+              
+              <!-- Controles de Edición rápidos -->
+              <div class="position-absolute top-0 end-0 m-3 z-3 d-flex gap-1.5 bg-dark-subtle p-1.5 rounded-3 shadow">
+                <a [routerLink]="['/anuncio/editar', item.id]" class="btn btn-light btn-sm px-2.5 py-1.5 rounded-2 d-flex align-items-center justify-content-center text-dark" title="Editar">
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+                <button (click)="deleteItem(item.id!)" class="btn btn-danger btn-sm px-2.5 py-1.5 rounded-2 d-flex align-items-center justify-content-center" title="Eliminar">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PESTAÑA: FAVORITOS -->
+      <div *ngIf="activeTab === 'favoritos'">
+        <div class="border-bottom pb-3 border-light-subtle mb-4">
+          <h3 class="fw-bold text-dark mb-1">Mis Favoritos</h3>
+          <p class="text-muted mb-0 small">Los artículos que has guardado para revisar más tarde.</p>
+        </div>
+
+        <div *ngIf="favoriteItems.length === 0" class="text-center py-5">
+          <i class="bi bi-heartbreak fs-1 text-muted mb-3 d-block"></i>
+          <h5 class="fw-bold text-dark">Tu lista de favoritos está vacía</h5>
+          <p class="text-muted small">Haz clic en el icono del corazón en cualquier anuncio del catálogo para guardarlo aquí.</p>
+          <a routerLink="/home" class="btn btn-outline-success rounded-pill px-4 mt-3 fw-semibold">Explorar catálogo</a>
+        </div>
+
+        <!-- Listado de Favoritos -->
+        <div *ngIf="favoriteItems.length > 0" class="row row-cols-1 row-cols-md-2 g-4">
+          <div *ngFor="let item of favoriteItems" class="col">
+            <div class="position-relative h-100">
+              <app-item-card [item]="item" [showHeart]="false"></app-item-card>
+              <!-- Botón rápido para eliminar de favoritos -->
+              <button 
+                (click)="removeFavorite(item.id!)" 
+                class="btn btn-danger btn-sm rounded-circle position-absolute top-0 end-0 m-3 z-3 shadow d-flex align-items-center justify-content-center" 
+                style="width: 32px; height: 32px;"
+                title="Quitar de favoritos"
+              >
+                <i class="bi bi-heart-fill"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PESTAÑA: MENSAJES -->
+      <div *ngIf="activeTab === 'mensajes'">
+        <div class="border-bottom pb-3 border-light-subtle mb-4">
+          <h3 class="fw-bold text-dark mb-1">Mensajes y Chats</h3>
+          <p class="text-muted mb-0 small">Comunícate de forma segura con compradores y vendedores.</p>
+        </div>
+
+        <div class="row g-0 rounded-4 border border-light overflow-hidden shadow-sm" style="height: 480px;">
+          <!-- Lista de chats -->
+          <div class="col-md-4 border-end border-light bg-light-subtle" style="overflow-y: auto;">
+            <div class="p-3 border-bottom border-light">
+              <input type="text" class="form-control form-control-sm rounded-pill border-light bg-white" placeholder="Buscar mensajes...">
+            </div>
+            
+            <div class="list-group list-group-flush">
+              <button 
+                *ngFor="let chat of chats" 
+                (click)="selectChat(chat)"
+                class="list-group-item list-group-item-action border-bottom border-light d-flex align-items-center gap-2.5 py-3"
+                [class.active-chat]="selectedChat?.id === chat.id"
+              >
+                <img [src]="chat.itemImage" alt="item" class="rounded object-cover flex-shrink-0" style="width: 44px; height: 44px;">
+                <div class="flex-grow-1 min-w-0">
+                  <div class="d-flex justify-content-between align-items-center mb-0.5">
+                    <h6 class="fw-bold text-dark mb-0 text-sm truncate-text">{{ chat.userName }}</h6>
+                    <span *ngIf="chat.unread" class="badge bg-success rounded-circle p-1.5"><span class="visually-hidden">Mensaje nuevo</span></span>
+                  </div>
+                  <p class="text-muted text-xs mb-0.5 fw-semibold truncate-text">{{ chat.itemTitle }}</p>
+                  <p class="text-muted text-xxs mb-0 truncate-text">{{ chat.lastMessage }}</p>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          <!-- Ventana activa de chat -->
+          <div class="col-md-8 d-flex flex-column bg-white">
+            <div *ngIf="!selectedChat" class="d-flex flex-column align-items-center justify-content-center flex-grow-1 p-5 text-center text-muted">
+              <i class="bi bi-chat-left-quote fs-1 mb-3"></i>
+              <h5 class="fw-bold text-dark">Buzón de Mensajes</h5>
+              <p class="small mb-0">Selecciona una conversación del lateral para empezar a chatear.</p>
+            </div>
+
+            <!-- Chat Activo -->
+            <ng-container *ngIf="selectedChat">
+              <!-- Cabecera del chat -->
+              <div class="p-3 border-bottom border-light d-flex align-items-center justify-content-between bg-light-subtle">
+                <div class="d-flex align-items-center gap-2.5">
+                  <img [src]="selectedChat.itemImage" alt="item" class="rounded object-cover" style="width: 40px; height: 40px;">
+                  <div>
+                    <h6 class="fw-bold text-dark mb-0 text-sm">{{ selectedChat.userName }}</h6>
+                    <p class="text-muted text-xs mb-0">{{ selectedChat.itemTitle }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Lista de mensajes -->
+              <div class="flex-grow-1 p-3 d-flex flex-column gap-3 chat-messages-container" style="overflow-y: auto; background-color: #fafbfc;">
+                <div 
+                  *ngFor="let msg of selectedChat.messages" 
+                  class="d-flex flex-column"
+                  [class.align-items-end]="msg.sender === 'me'"
+                  [class.align-items-start]="msg.sender === 'other'"
+                >
+                  <div 
+                    class="rounded-4 px-3.5 py-2.5 max-w-75 text-sm shadow-sm"
+                    [class.chat-bubble-me]="msg.sender === 'me'"
+                    [class.chat-bubble-other]="msg.sender === 'other'"
+                  >
+                    {{ msg.text }}
+                  </div>
+                  <span class="text-muted text-xxs mt-1 px-1">{{ msg.time }}</span>
+                </div>
+              </div>
+
+              <!-- Campo de envío -->
+              <div class="p-3 border-top border-light bg-light-subtle">
+                <form (submit)="sendMessage()" class="d-flex gap-2">
+                  <input 
+                    type="text" 
+                    [(ngModel)]="newMessageText" 
+                    name="newMessage"
+                    class="form-control rounded-pill border-light bg-white px-3.5" 
+                    placeholder="Escribe tu mensaje..."
+                    autocomplete="off"
+                  >
+                  <button type="submit" class="btn btn-success rounded-circle d-flex align-items-center justify-content-center p-0" style="width: 40px; height: 40px;">
+                    <i class="bi bi-send-fill text-white"></i>
+                  </button>
+                </form>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <!-- PESTAÑA: PERFIL -->
+      <div *ngIf="activeTab === 'perfil'">
+        <div class="border-bottom pb-3 border-light-subtle mb-4">
+          <h3 class="fw-bold text-dark mb-1">Mi Perfil</h3>
+          <p class="text-muted mb-0 small">Actualiza tus datos personales y credenciales de acceso.</p>
+        </div>
+
+        <form [formGroup]="profileForm" (submit)="saveProfile()" class="mx-auto" style="max-width: 580px;">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-dark text-xs mb-1">Nombre de usuario</label>
+              <input 
+                type="text" 
+                formControlName="username" 
+                class="form-control border-light-subtle bg-light rounded-3 py-2.5"
+                [class.is-invalid]="profileForm.get('username')?.touched && profileForm.get('username')?.invalid"
+              >
+              <div class="invalid-feedback text-xs">Mínimo 3 caracteres.</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold text-dark text-xs mb-1">Apellidos</label>
+              <input 
+                type="text" 
+                formControlName="apellido" 
+                class="form-control border-light-subtle bg-light rounded-3 py-2.5"
+                [class.is-invalid]="profileForm.get('apellido')?.touched && profileForm.get('apellido')?.invalid"
+              >
+              <div class="invalid-feedback text-xs">Mínimo 3 caracteres.</div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold text-dark text-xs mb-1">Correo electrónico</label>
+              <input 
+                type="email" 
+                formControlName="email" 
+                class="form-control border-light-subtle bg-light rounded-3 py-2.5"
+                [class.is-invalid]="profileForm.get('email')?.touched && profileForm.get('email')?.invalid"
+              >
+              <div class="invalid-feedback text-xs">Introduce un email válido.</div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label fw-semibold text-dark text-xs mb-1">Nueva Contraseña (dejar en blanco para mantener actual)</label>
+              <input 
+                type="password" 
+                formControlName="password" 
+                class="form-control border-light-subtle bg-light rounded-3 py-2.5"
+                placeholder="********"
+                [class.is-invalid]="profileForm.get('password')?.touched && profileForm.get('password')?.invalid"
+              >
+              <div class="invalid-feedback text-xs">Mínimo 8 caracteres.</div>
+            </div>
+
+            <div class="col-12 text-end mt-4">
+              <button type="submit" [disabled]="profileForm.invalid" class="btn btn-success rounded-pill px-4.5 py-2.5 fw-bold shadow-sm">
+                Guardar cambios
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>

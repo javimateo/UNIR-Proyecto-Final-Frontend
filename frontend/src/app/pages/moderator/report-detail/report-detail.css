@@ -32,7 +32,7 @@ margin-bottom:30px;
 
 display:grid;
 
-grid-template-columns:420px 1fr;
+grid-template-columns:minmax(0, 420px) 1fr;
 
 gap:40px;
 
@@ -142,11 +142,41 @@ background:#a01d1d;
 
 }
 
-@media(max-width:900px){
+@media(max-width:768px){
 
 .content{
 
 grid-template-columns:1fr;
+
+gap:20px;
+
+}
+
+.buttons{
+
+flex-direction:column;
+
+}
+
+.approve, .delete{
+
+text-align:center;
+
+}
+
+}
+
+@media(max-width:575.98px){
+
+:host{
+
+padding:20px;
+
+}
+
+.info{
+
+padding:20px;
 
 }
 
