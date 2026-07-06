@@ -17,6 +17,7 @@ import { adminGuard } from './guards/admin-guard';
 import { moderadorGuard } from './guards/moderador-guard';
 import { guestGuard } from './guards/guest.guard';
 import { authGuard } from './guards/auth.guard';
+import { PaymentComponent } from './pages/payment/payment';
 
 
 export const routes: Routes = [  
@@ -29,17 +30,17 @@ export const routes: Routes = [
     {path:"dashboard", component:UserDashboardComponent, canActivate:[authGuard]},
     {path:"admin-dashboard", component:AdminDashboardComponent, canActivate:[adminGuard]},
     {path:"mod-dashboard", component:ModDashboardComponent, canActivate:[moderadorGuard]},
-  {path:"moderator",component:ModeratorHomeComponent},
+    {path:"moderator",component:ModeratorHomeComponent},
 
-  {path:"reported-products",component:ReportedProductsComponent},
+    {path:"reported-products",component:ReportedProductsComponent},
 
-  {path:"report-detail", component:ReportDetailComponent},
-  
-  {path:'incidents', component:IncidentsComponent},
+    {path:"report-detail", component:ReportDetailComponent},
+    
+    {path:'incidents', component:IncidentsComponent},
 
-  {path:"history", component:HistoryComponent},
+    {path:"history", component:HistoryComponent},
 
-  {path:'notification', component:NotificationComponent},
+    {path:'notification', component:NotificationComponent},
+
+    {path: 'payment', component: PaymentComponent},
 ];
-
-
