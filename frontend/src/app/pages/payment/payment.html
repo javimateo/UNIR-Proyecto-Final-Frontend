@@ -2,78 +2,70 @@
 
     <div class="payment-container">
 
-        <aside class="order-summary">
+<aside class="order-summary">
 
-            <h2>Resumen del pedido</h2>
+    <h2>Resumen del pedido</h2>
 
-            <img
-                [src]="producto.imagen"
-                [alt]="producto.nombre"
-                class="product-image">
+    <img
+        [src]="producto?.photos?.[0]?.url"
+        [alt]="producto?.title"
+        class="product-image">
 
-            <h3>{{ producto.nombre }}</h3>
+    <h3>{{ producto?.title }}</h3>
 
-            <p class="seller">
+    <p class="seller">
 
-                Vendido por <strong>{{ producto.vendedor }}</strong>
+        Vendido por <strong>{{ producto?.username || 'Vendedor' }}</strong>
 
-            </p>
+    </p>
 
-            <div class="product-info">
+    <div class="product-info">
 
-                <p>
+        <p>
 
-                    <strong>Estado:</strong>
+            <strong>Estado:</strong>
 
-                    {{ producto.estado }}
+            {{ producto?.item_condition }}
 
-                </p>
+        </p>
 
-                <p>
+        <p>
 
-                    <strong>Garantía:</strong>
+            <strong>Categoría:</strong>
 
-                    {{ producto.garantia }}
+            {{ producto?.category_name }}
 
-                </p>
+        </p>
 
-                <p>
+    </div>
 
-                    <strong>Envío:</strong>
+    <hr>
 
-                    {{ producto.envio }}
+    <div class="price-row">
 
-                </p>
+        <span>Precio</span>
 
-            </div>
+        <strong>{{ producto?.price }} €</strong>
 
-            <hr>
+    </div>
 
-            <div class="price-row">
+    <div class="price-row">
 
-                <span>Precio</span>
+        <span>Envío</span>
 
-                <strong>{{ producto.precio }} €</strong>
+        <strong>Gratis</strong>
 
-            </div>
+    </div>
 
-            <div class="price-row">
+    <div class="price-row total-row">
 
-                <span>Envío</span>
+        <span>Total</span>
 
-                <strong>Gratis</strong>
+        <strong>{{ producto?.price }} €</strong>
 
-            </div>
+    </div>
 
-            <div class="price-row total-row">
-
-                <span>Total</span>
-
-                <strong>{{ producto.precio }} €</strong>
-
-            </div>
-
-        </aside>
+</aside>
 
         <div class="payment-card">
 
