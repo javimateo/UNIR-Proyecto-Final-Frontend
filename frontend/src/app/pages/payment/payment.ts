@@ -1,6 +1,10 @@
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+
+import { ItemService } from '../../service/item.service';
+import { IItem } from '../../interface/iitem.interface';
 
 @Component({
   selector: 'app-payment',
@@ -9,98 +13,62 @@ import { CommonModule } from '@angular/common';
   templateUrl: './payment.html',
   styleUrls: ['./payment.css']
 })
-export class PaymentComponent {
+export class PaymentComponent implements OnInit {
 
-  // Datos del comprador
+  private route = inject(ActivatedRoute);
+  private itemService = inject(ItemService);
+
   nombre = '';
   email = '';
   telefono = '';
 
-  // Tarjeta
-  titular = '';
-  numeroTarjeta = '';
-  caducidad = '';
-  cvv = '';
-
-  // Dirección
   direccion = '';
   ciudad = '';
   codigoPostal = '';
 
   aceptar = false;
+  compraConfirmada = false;
 
-  total = 599;
+  producto: IItem | null = null;
 
-  procesando = false;
-  pagoCorrecto = false;
+  async ngOnInit(): Promise<void> {
 
-  tipoTarjeta = 'TARJETA';
+    const id = Number(this.route.snapshot.paramMap.get('id'));
 
-  colorTarjeta = 'visa';
-
-  formatearNumero() {
-
-    let numero = this.numeroTarjeta.replace(/\D/g, '');
-
-    numero = numero.substring(0,16);
-
-    this.numeroTarjeta = numero.replace(/(.{4})/g,'$1 ').trim();
-
-    this.detectarTarjeta();
-
-  }
-
-  detectarTarjeta(){
-
-    const numero = this.numeroTarjeta.replace(/\s/g,'');
-
-    if(numero.startsWith('4')){
-
-      this.tipoTarjeta = 'VISA';
-      this.colorTarjeta = 'visa';
-
+    if (!id) {
+      return;
     }
 
-    else if(numero.startsWith('34') || numero.startsWith('37')){
+    try {
 
-      this.tipoTarjeta = 'AMERICAN EXPRESS';
-      this.colorTarjeta = 'amex';
+      this.producto = await this.itemService.getById(id);
 
-    }
+      console.log(this.producto);
 
-    else{
+    } catch (error) {
 
-      this.tipoTarjeta = 'TARJETA';
-      this.colorTarjeta = 'visa';
+      console.error('Error cargando el artículo', error);
 
     }
 
   }
 
- pagar(){
+  confirmarCompra(): void {
 
-  if(
-    this.nombre &&
-    this.email &&
-    this.telefono &&
-    this.titular &&
-    this.numeroTarjeta &&
-    this.caducidad &&
-    this.cvv &&
-    this.direccion &&
-    this.ciudad &&
-    this.codigoPostal &&
-    this.aceptar
-  ){
+    if (
+      this.nombre &&
+      this.email &&
+      this.telefono &&
+      this.direccion &&
+      this.ciudad &&
+      this.codigoPostal &&
+      this.aceptar
+    ) {
 
-    setTimeout(() => {
+      this.compraConfirmada = true;
 
-      this.pagoCorrecto = true;
-
-    },1000);
+    }
 
   }
-
-}
 
 }

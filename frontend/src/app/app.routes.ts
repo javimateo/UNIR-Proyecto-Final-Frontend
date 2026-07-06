@@ -29,7 +29,9 @@ export const routes: Routes = [
 
   {path:'notification', component:NotificationComponent},
 
-  {path: 'payment', component: PaymentComponent},
-  
+    {
+    path: 'payment/:id',
+    component: PaymentComponent
+    }
 
 ];
